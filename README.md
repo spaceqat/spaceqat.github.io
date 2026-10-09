@@ -44,7 +44,7 @@
 ## 技术口径
 
 - 主视觉：精密层叠玻璃立方体、相干光路与不同输出结构，表达共同语言连接多种量子体系。
-- 首屏定位：连接科研、教育、产业与全球开发者的量子开源社区。突出“开放每一面，叠加无限可能。”与“We built a SPACE for Quantum.”，并展示 SPACE 五个方向。
+- 首屏定位：连接科研、教育、产业与全球开发者的量子开源社区。突出“开放每一面，叠加无限可能。”与“We built a SPACE for Quantum.”，紧邻英文口号逐字母解释 SPACE：Science 学术、People 人才、Applications 产业、Code 开源、Exchange 社区与传播。
 - 信息重心：SpaceQat 社区定位 → 开源工具（FatQat） → 开放基座 → 不同参与者 → 动态与共建伙伴；编程、编译、仿真与未来硬件接入在 FatQat 板块介绍。
 - 当前公开编译目标：超导、中性原子；更多体系持续探索。真实量子硬件接入为后续计划，页面区分当前能力与未来硬件执行方向。
 - 技术依据：[官方编译指南](https://fatqat.readthedocs.io/en/latest/guide/compiler/)、[Compiler API](https://fatqat.readthedocs.io/en/latest/api/compiler/)、[执行模型](https://fatqat.readthedocs.io/en/latest/guide/execution-models/)。
