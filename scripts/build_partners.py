@@ -11,7 +11,7 @@ START = '<!-- PARTNER_GALLERY_START -->'
 END = '<!-- PARTNER_GALLERY_END -->'
 
 
-def gallery(items):
+def gallery(items, lang='zh'):
     cards = []
     seen = set()
     for item in items:
@@ -19,7 +19,7 @@ def gallery(items):
         if not name or name in seen:
             raise ValueError(f'Empty or duplicate partner name: {name}')
         seen.add(name)
-        label = html.escape(name)
+        label = html.escape(item.get('nameEn', name) if lang == 'en' else name)
         logo = item.get('logo', '')
         website = item.get('website', '')
         if website and urlparse(website).scheme != 'https':
@@ -45,26 +45,41 @@ def gallery(items):
 
 def main():
     data = json.loads((ROOT / 'data' / 'partners.json').read_text())
-    markup = '\n<div class="partners-gallery">\n<div class="organizers">\n'
-    for key, title in [('initiators', '共同发起方'), ('committee', '委员单位')]:
-        markup += f'<div class="organizer"><h3>{title}</h3>\n{gallery(data[key])}\n</div>\n'
-    markup += ('</div>\n<div class="partner-network">\n<div class="partner-caption">'
-               '<h3>共建伙伴</h3><small>排名顺序不分先后</small></div>\n')
-    markup += gallery(data['partners'])
-    markup += '\n</div>\n</div>\n'
-    page = ROOT / 'index.html'
-    source = page.read_text()
-    if START not in source or END not in source:
-        raise ValueError('Partner gallery markers are missing from index.html')
-    source = re.sub(re.escape(START) + r'.*?' + re.escape(END),
-                    lambda _: START + markup + END, source, flags=re.S)
-    guidance = '<br>'.join(html.escape(item['name']) for item in data['guidance'])
-    source, updated = re.subn(r'(<div class="guidance"><small>指导单位</small><p>).*?(</p></div>)',
-                              lambda match: match[1] + guidance + match[2], source, count=1)
-    if updated != 1:
-        raise ValueError('Guidance block is missing from index.html')
-    page.write_text(source)
-    print(f'Updated {sum(len(data[key]) for key in ("initiators", "committee", "partners"))} partner cards.')
+    pages = {
+        'index.html': {
+            'lang': 'zh', 'initiators': '共同发起方', 'committee': '委员单位',
+            'partners': '共建伙伴', 'order': '排名顺序不分先后', 'guidance': '指导单位'
+        },
+        'en.html': {
+            'lang': 'en', 'initiators': 'Co-initiators', 'committee': 'Committee Members',
+            'partners': 'Ecosystem Partners', 'order': 'Listed in no particular order',
+            'guidance': 'Guiding Organization'
+        }
+    }
+    card_count = sum(len(data[key]) for key in ('initiators', 'committee', 'partners'))
+    for filename, labels in pages.items():
+        lang = labels['lang']
+        markup = '\n<div class="partners-gallery">\n<div class="organizers">\n'
+        for key in ('initiators', 'committee'):
+            markup += f'<div class="organizer"><h3>{labels[key]}</h3>\n{gallery(data[key], lang)}\n</div>\n'
+        markup += ('</div>\n<div class="partner-network">\n<div class="partner-caption">'
+                   f'<h3>{labels["partners"]}</h3><small>{labels["order"]}</small></div>\n')
+        markup += gallery(data['partners'], lang)
+        markup += '\n</div>\n</div>\n'
+        page = ROOT / filename
+        source = page.read_text()
+        if START not in source or END not in source:
+            raise ValueError(f'Partner gallery markers are missing from {filename}')
+        source = re.sub(re.escape(START) + r'.*?' + re.escape(END),
+                        lambda _: START + markup + END, source, flags=re.S)
+        guidance = '<br>'.join(html.escape(item.get('nameEn', item['name']) if lang == 'en' else item['name'])
+                              for item in data['guidance'])
+        pattern = rf'(<div class="guidance"><small>{re.escape(labels["guidance"])}</small><p>).*?(</p></div>)'
+        source, updated = re.subn(pattern, lambda match: match[1] + guidance + match[2], source, count=1)
+        if updated != 1:
+            raise ValueError(f'Guidance block is missing from {filename}')
+        page.write_text(source)
+    print(f'Updated {card_count} partner cards in Chinese and English pages.')
 
 
 if __name__ == '__main__':

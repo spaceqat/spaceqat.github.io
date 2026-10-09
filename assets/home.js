@@ -105,21 +105,29 @@
   const network = document.querySelector('.partner-network');
   const grid = network?.querySelector(':scope > .partner-logo-grid');
   if (!grid) return;
+  const english = document.documentElement.lang.toLowerCase().startsWith('en');
+  const labels = english ? {
+    pause: 'Pause motion', resume: 'Resume motion', view: 'View all partners', back: 'Return to moving display',
+    hint: 'Hover to pause · Swipe horizontally on mobile'
+  } : {
+    pause: '暂停滚动', resume: '继续滚动', view: '查看全部伙伴', back: '返回滚动展示',
+    hint: '悬停暂停 · 手机可左右滑动'
+  };
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   const controls = document.createElement('div');
   controls.className = 'partner-motion-controls';
   const pause = document.createElement('button');
   pause.type = 'button';
-  pause.textContent = '暂停滚动';
+  pause.textContent = labels.pause;
   pause.setAttribute('aria-pressed', 'false');
   const all = document.createElement('button');
   all.type = 'button';
-  all.textContent = '查看全部伙伴';
+  all.textContent = labels.view;
   all.setAttribute('aria-expanded', 'false');
   grid.id = 'all-partners';
   all.setAttribute('aria-controls', grid.id);
   const hint = document.createElement('span');
-  hint.textContent = '悬停暂停 · 手机可左右滑动';
+  hint.textContent = labels.hint;
   controls.append(pause, all, hint);
   const marquee = document.createElement('div');
   marquee.className = 'partner-marquee';
@@ -158,10 +166,10 @@
     marquee.hidden = reduce.matches || expanded;
     controls.hidden = reduce.matches;
     network.classList.toggle('motion-paused', paused);
-    pause.textContent = paused ? '继续滚动' : '暂停滚动';
+    pause.textContent = paused ? labels.resume : labels.pause;
     pause.setAttribute('aria-pressed', String(paused));
     pause.hidden = expanded;
-    all.textContent = expanded ? '返回滚动展示' : '查看全部伙伴';
+    all.textContent = expanded ? labels.back : labels.view;
     all.setAttribute('aria-expanded', String(expanded));
     hint.hidden = expanded;
   }

@@ -188,3 +188,16 @@
 @keyframes box-support{0%,50%{opacity:0}100%{opacity:1}}
 @media(max-width:600px){.hero-box{--box:120px}.hero-box-glow{width:280px;height:240px}.hero-opened .hero-box-stage{opacity:.05}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}.hero-box-stage{display:none!important}}
+
+/* Bilingual navigation and English copy adjustments. */
+.nav-links .language-switch{min-width:44px;padding:7px 12px;border:1px solid #81979988;border-radius:999px;text-align:center;font:500 13px/1.4 var(--font-latin),var(--font-body);letter-spacing:.04em}
+html[lang=en] body{font-family:var(--font-latin),Arial,sans-serif}
+html[lang=en] .display,html[lang=en] h1,html[lang=en] h2,html[lang=en] h3{font-family:var(--font-latin),Arial,sans-serif}
+html[lang=en] .hero h1{max-width:1240px;font-size:clamp(44px,5.5vw,78px);letter-spacing:-.045em}
+html[lang=en] .hero-description{max-width:860px}
+html[lang=en] .about-layout{grid-template-columns:1.35fr 1fr}
+html[lang=en] .audience-card h3{font-size:clamp(22px,1.9vw,29px)}
+html[lang=en] .partner-logo-name{line-height:1.35}
+@media(max-width:1100px){html[lang=en] .nav-links{gap:14px;font-size:14px}html[lang=en] .nav-links .nav-cta{gap:16px}}
+@media(max-width:900px){html[lang=en] .nav-links{gap:8px;font-size:17px}.nav-links .language-switch{align-self:flex-start;min-width:70px;padding-inline:16px}html[lang=en] .about-layout{grid-template-columns:1fr}}
+@media(max-width:600px){html[lang=en] .hero h1{font-size:clamp(34px,9vw,48px);line-height:1.18}html[lang=en] .hero .eyebrow{max-width:330px}html[lang=en] .hero-description{font-size:16px;line-height:1.65}html[lang=en] .space-dimensions dd{font-size:13px}html[lang=en] .closing-brand span{letter-spacing:.02em}}

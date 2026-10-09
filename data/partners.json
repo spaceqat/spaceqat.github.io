@@ -2,6 +2,7 @@
   "guidance": [
     {
       "name": "上海市科学技术委员会",
+      "nameEn": "Shanghai Municipal Science and Technology Commission",
       "logo": "",
       "website": "",
       "theme": "light",
@@ -12,6 +13,7 @@
   "initiators": [
     {
       "name": "水木络绎",
+      "nameEn": "Talent Rising",
       "logo": "assets/partners/shuimu-luoyi.png",
       "website": "",
       "theme": "light",
@@ -20,6 +22,7 @@
     },
     {
       "name": "通源量智",
+      "nameEn": "OpenQI",
       "logo": "assets/partners/open-qi.png",
       "website": "https://open-qi.com/",
       "theme": "dark",
@@ -30,6 +33,7 @@
   "committee": [
     {
       "name": "上海科学院",
+      "nameEn": "Shanghai Academy of Science and Technology",
       "logo": "assets/partners/sast.png",
       "website": "https://sast.org.cn/",
       "theme": "light",
@@ -38,6 +42,7 @@
     },
     {
       "name": "上海人工智能实验室",
+      "nameEn": "Shanghai AI Laboratory",
       "logo": "assets/partners/shlab.webp",
       "website": "https://www.shlab.org.cn/",
       "theme": "dark",
@@ -46,6 +51,7 @@
     },
     {
       "name": "上海物理智能与机器人研究院",
+      "nameEn": "Shanghai Institute for Embodied Intelligence and Robotics",
       "logo": "assets/partners/pair.jpg",
       "website": "",
       "theme": "light",
@@ -56,6 +62,7 @@
   "partners": [
     {
       "name": "中电信量子集团",
+      "nameEn": "China Telecom Quantum Group",
       "logo": "assets/partners/china-telecom-quantum.png",
       "website": "",
       "theme": "light",
@@ -64,6 +71,7 @@
     },
     {
       "name": "璇相科技",
+      "nameEn": "Lumind Quantum",
       "logo": "assets/partners/xuanxiang.png",
       "website": "",
       "theme": "light",
@@ -72,6 +80,7 @@
     },
     {
       "name": "壁仞科技",
+      "nameEn": "Biren Technology",
       "logo": "assets/partners/biren.svg",
       "website": "https://www.birentech.com/",
       "theme": "light",
@@ -80,6 +89,7 @@
     },
     {
       "name": "上海交通大学",
+      "nameEn": "Shanghai Jiao Tong University",
       "logo": "assets/partners/sjtu.png",
       "website": "https://vi.sjtu.edu.cn/index.php/articles/bulletin/13",
       "theme": "light",
@@ -88,6 +98,7 @@
     },
     {
       "name": "国盾量子",
+      "nameEn": "QuantumCTek",
       "logo": "assets/partners/quantumctek.png",
       "website": "https://www.quantum-info.com/",
       "theme": "light",
@@ -96,6 +107,7 @@
     },
     {
       "name": "晶科能源",
+      "nameEn": "JinkoSolar",
       "logo": "assets/partners/jinko.png",
       "website": "https://www.jinkosolar.com/",
       "theme": "light",
@@ -104,6 +116,7 @@
     },
     {
       "name": "硅臻芯片",
+      "nameEn": "Silicon Extreme",
       "logo": "assets/partners/guizhen.png",
       "website": "https://www.gz-ichip.com/",
       "theme": "dark",
@@ -112,6 +125,7 @@
     },
     {
       "name": "华东师范大学",
+      "nameEn": "East China Normal University",
       "logo": "assets/partners/ecnu.svg",
       "website": "https://www.ecnu.edu.cn/",
       "theme": "dark",
@@ -120,6 +134,7 @@
     },
     {
       "name": "中器无量",
+      "nameEn": "Zhongqi Wuliang",
       "logo": "assets/partners/zhongqi-wuliang.png",
       "website": "https://zqwl-quantum.com/",
       "theme": "light",
@@ -128,6 +143,7 @@
     },
     {
       "name": "量感智能",
+      "nameEn": "Quantum Intelligence Sensing",
       "logo": "assets/partners/lianggan-intelligence.jpg",
       "website": "",
       "theme": "light",
@@ -136,6 +152,7 @@
     },
     {
       "name": "伏曦量子",
+      "nameEn": "Foresight Quantum",
       "logo": "assets/partners/fuxi.png",
       "website": "",
       "theme": "dark",
@@ -144,6 +161,7 @@
     },
     {
       "name": "未来启点社区",
+      "nameEn": "Shanghai Engine Community",
       "logo": "assets/partners/future-engine-community.jpg",
       "website": "",
       "theme": "light",
@@ -152,6 +170,7 @@
     },
     {
       "name": "酉术量子",
+      "nameEn": "UnitaryLab",
       "logo": "assets/partners/unitarylab.svg",
       "website": "https://unitarylab.com/",
       "theme": "dark",
@@ -160,6 +179,7 @@
     },
     {
       "name": "希微智源",
+      "nameEn": "Xiwei Zhiyuan",
       "logo": "assets/partners/xiwei-zhiyuan.jpg",
       "website": "",
       "theme": "light",
@@ -168,6 +188,7 @@
     },
     {
       "name": "康龙化成",
+      "nameEn": "Pharmaron",
       "logo": "assets/partners/pharmaron.svg",
       "website": "https://www.pharmaron.cn/",
       "theme": "light",
@@ -176,6 +197,7 @@
     },
     {
       "name": "华大生命科学研究院",
+      "nameEn": "BGI Research",
       "logo": "assets/partners/bgi-research.png",
       "website": "https://research.genomics.cn/",
       "theme": "light",
@@ -184,6 +206,7 @@
     },
     {
       "name": "华翊量子",
+      "nameEn": "Huayi Quantum",
       "logo": "assets/partners/huayi-quantum.png",
       "website": "",
       "theme": "light",
@@ -192,6 +215,7 @@
     },
     {
       "name": "工商银行软件开发中心",
+      "nameEn": "ICBC Software Development Center",
       "logo": "assets/partners/icbc.jpg",
       "website": "https://www.icbc-ltd.com/",
       "theme": "light",
@@ -200,6 +224,7 @@
     },
     {
       "name": "中科酷原",
+      "nameEn": "CAS Cold Atom",
       "logo": "assets/partners/cascoldatom.png",
       "website": "https://www.cascoldatom.com/index.php",
       "theme": "light",
@@ -208,6 +233,7 @@
     },
     {
       "name": "申能诚毅",
+      "nameEn": "Shenergy Chengyi",
       "logo": "assets/partners/shenergy-chengyi.jpg",
       "website": "",
       "theme": "light",
@@ -216,6 +242,7 @@
     },
     {
       "name": "逻辑比特",
+      "nameEn": "LogicalQubit",
       "logo": "assets/partners/logicalqubit.svg",
       "website": "https://logicalqubit.com/",
       "theme": "dark",
@@ -224,6 +251,7 @@
     },
     {
       "name": "幂波隧力",
+      "nameEn": "Mibo Suili",
       "logo": "assets/partners/mibo-suili.jpg",
       "website": "",
       "theme": "light",
@@ -232,6 +260,7 @@
     },
     {
       "name": "太一量生",
+      "nameEn": "Taiyi Quantum",
       "logo": "assets/partners/taiyi-liangsheng.jpg",
       "website": "",
       "theme": "dark",
@@ -240,6 +269,7 @@
     },
     {
       "name": "铁马量子实验室",
+      "nameEn": "FerroQ Lab",
       "logo": "assets/partners/ferroq-lab.jpg",
       "website": "",
       "theme": "light",
@@ -248,6 +278,7 @@
     },
     {
       "name": "量观知元",
+      "nameEn": "Liangguan Zhiyuan",
       "logo": "assets/partners/liangguan-zhiyuan.jpg",
       "website": "",
       "theme": "light",
@@ -256,6 +287,7 @@
     },
     {
       "name": "量子元匙",
+      "nameEn": "Quantum Key",
       "logo": "",
       "website": "",
       "theme": "light",
