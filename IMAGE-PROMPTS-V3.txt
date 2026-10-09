@@ -1,0 +1,30 @@
+Asset A — Open foundation
+
+Use case: stylized-concept
+Asset type: premium scientific website section artwork, 16:9 landscape, 2048 x 1152 composition.
+Primary request: Generate a completely NEW scene for an open software foundation section. This is not an edit or recreation of the reference hero.
+Input images: Image 1 is a STYLE REFERENCE ONLY. Match its museum-quality scientific 3D rendering, exquisitely transparent optical glass, intricate etched detail, coherent blue-cyan light fibers and restrained tiny warm-gold points. Do not copy its giant cube, flow direction, objects or composition.
+Scene/backdrop: near-black deep navy #050d19, quiet and spacious, with a subtle dark fade at the bottom and edges.
+Subject: precisely two upright, intricately layered optical-glass planes or shallow cuboid assemblies, placed at different depths within the rightmost 60% of the frame. They represent interactions between a foundational software layer and an intelligence layer through extremely fine coherent cyan and occasional gold light paths connecting the two planes. Delicate etched microstructures and restrained blue-cyan nodes within the glass, occasional tiny gold nodes, physically convincing refraction, exacting precision.
+Style/medium: museum-quality refined scientific 3D visualization, photorealistic optical materials, elegant, sophisticated, clear and highly detailed.
+Composition/framing: wide 16:9 image. All prominent structures in the right 60%. Keep the entire left 40% clean, dark, unoccupied negative space. Two modestly angled upright glass-layer structures with legible separation and graceful interconnecting fine filaments. Lower edge fades naturally into dark navy.
+Lighting/mood: restrained luminous details and crisp glass reflections, calm, precise and quietly monumental. Avoid loud glow or a bright central explosion.
+Color palette: near-black navy #050d19 background, optical blue and cyan, very sparse warm-gold accents.
+Text: none.
+Constraints: no text, letters, logos, labels, watermark or interface. No people or faces, buildings, Earth, planets, atomic orbital rings, computers or physical computing equipment. Do not depict a chip advertisement or circuit-board product shot. No generic neon overload. No duplication of the reference scene.
+
+Asset B — Collaboration network
+
+Use case: stylized-concept
+Asset type: premium scientific website visual extension for people, collaboration and partners, 16:9 landscape, 2048 x 1152 composition.
+Primary request: Generate a completely NEW scene of an expansive, transparent spatial collaboration network. This is not an edit or recreation of the reference hero.
+Input images: Image 1 is a STYLE REFERENCE ONLY. Match its museum-quality scientific 3D rendering, optical-glass precision, exquisitely fine coherent light threads and a restrained blue-cyan-gold palette. Do not copy its giant cube, flow direction, objects or composition.
+Scene/backdrop: vast, quiet deep-blue space that merges softly into near-black navy #050d19 at all edges.
+Subject: a three-dimensional collaboration network made of many sparse tiny optical-glass nodes and elegant extremely thin light filaments. One relatively small luminous central core positioned center-right connects in an organized, harmonious manner to three to five smaller and finer peripheral node clusters, at varied depths and scales. The network evokes transparent space in which macro and micro scales intertwine. Clear hierarchy, subtle complexity and spacious intervals.
+Style/medium: refined museum-quality scientific 3D rendering, exquisitely delicate glass refraction, high precision, elegant depth and restraint.
+Composition/framing: wide 16:9 image. The main network occupies the rightmost 60% and the lower half. Keep the upper-left 40% clean dark negative space suitable for overlaying copy later. Small main core, organized sparse distant clusters, varied depth, graceful curved hairline connections. Smooth navy edge fade and dark lower fade to integrate with a page background.
+Lighting/mood: serene, expansive, collaborative, subtle controlled highlights, no dramatic flare, no excessive bloom.
+Color palette: near-black navy #050d19, transparent optical blue and cyan, a few tiny warm-gold highlights.
+Text: none.
+Constraints: no text, letters, logos, labels, watermark or interface. No people or faces, buildings, Earth or planets. No orbital atom symbol, no computers, chip or physical hardware representations and no implied hardware capabilities. Avoid generic dense glowing mesh, neon overload, clutter and bright left-side elements. Do not recreate the reference hero.
+

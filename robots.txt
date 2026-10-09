@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://space-qat.com/sitemap.xml
