@@ -1,0 +1,266 @@
+{
+  "guidance": [
+    {
+      "name": "上海市科学技术委员会",
+      "logo": "",
+      "website": "",
+      "theme": "light",
+      "source": "",
+      "assetSource": ""
+    }
+  ],
+  "initiators": [
+    {
+      "name": "水木络绎",
+      "logo": "",
+      "website": "",
+      "theme": "light",
+      "source": "",
+      "assetSource": ""
+    },
+    {
+      "name": "通源量智",
+      "logo": "assets/partners/open-qi.png",
+      "website": "https://open-qi.com/",
+      "theme": "dark",
+      "source": "https://open-qi.com/",
+      "assetSource": "https://open-qi.com/lockup-horizontal-bilingual-white.png"
+    }
+  ],
+  "committee": [
+    {
+      "name": "上海科学院",
+      "logo": "assets/partners/sast.png",
+      "website": "https://sast.org.cn/",
+      "theme": "light",
+      "source": "https://sast.org.cn/",
+      "assetSource": "https://sast.org.cn/images/logo.png"
+    },
+    {
+      "name": "上海人工智能实验室",
+      "logo": "assets/partners/shlab.webp",
+      "website": "https://www.shlab.org.cn/",
+      "theme": "dark",
+      "source": "https://www.shlab.org.cn/",
+      "assetSource": "https://www.shlab.org.cn/static/asset/2025/imgs/logo.webp"
+    },
+    {
+      "name": "上海物理智能与机器人研究院",
+      "logo": "",
+      "website": "",
+      "theme": "light",
+      "source": "",
+      "assetSource": ""
+    }
+  ],
+  "partners": [
+    {
+      "name": "中电信量子集团",
+      "logo": "",
+      "website": "",
+      "theme": "light",
+      "source": "",
+      "assetSource": ""
+    },
+    {
+      "name": "璇相科技",
+      "logo": "",
+      "website": "",
+      "theme": "light",
+      "source": "",
+      "assetSource": ""
+    },
+    {
+      "name": "壁仞科技",
+      "logo": "assets/partners/biren.svg",
+      "website": "https://www.birentech.com/",
+      "theme": "light",
+      "source": "https://www.birentech.com/",
+      "assetSource": "https://www.birentech.com/v-509f88f/_next/static/media/hero-logo-blue.382f0223.svg"
+    },
+    {
+      "name": "上海交通大学",
+      "logo": "assets/partners/sjtu.png",
+      "website": "https://vi.sjtu.edu.cn/index.php/articles/bulletin/13",
+      "theme": "light",
+      "source": "https://vi.sjtu.edu.cn/index.php/articles/bulletin/13",
+      "assetSource": "https://vi.sjtu.edu.cn/index.php/downloads/attachments/137"
+    },
+    {
+      "name": "国盾量子",
+      "logo": "assets/partners/quantumctek.png",
+      "website": "https://www.quantum-info.com/",
+      "theme": "light",
+      "source": "https://www.quantum-info.com/",
+      "assetSource": "https://www.quantum-info.com/templets/gdlz/images/img/logo.png"
+    },
+    {
+      "name": "晶科能源",
+      "logo": "assets/partners/jinko.png",
+      "website": "https://www.jinkosolar.com/",
+      "theme": "light",
+      "source": "https://www.jinkosolar.com/",
+      "assetSource": "https://www.jinkosolar.com/themes/basic/skin/images/logony.png"
+    },
+    {
+      "name": "硅臻芯片",
+      "logo": "assets/partners/guizhen.png",
+      "website": "https://www.gz-ichip.com/",
+      "theme": "dark",
+      "source": "https://www.gz-ichip.com/",
+      "assetSource": "https://www.gz-ichip.com/assets/App.vue_vue_type_style_index_0_lang-85257d7a.js"
+    },
+    {
+      "name": "华东师范大学",
+      "logo": "assets/partners/ecnu.svg",
+      "website": "https://www.ecnu.edu.cn/",
+      "theme": "dark",
+      "source": "https://www.ecnu.edu.cn/",
+      "assetSource": "https://www.ecnu.edu.cn/images/logo.svg"
+    },
+    {
+      "name": "中器无量",
+      "logo": "assets/partners/zhongqi-wuliang.png",
+      "website": "https://zqwl-quantum.com/",
+      "theme": "light",
+      "source": "https://zqwl-quantum.com/",
+      "assetSource": "https://zqwl-quantum.com/wp-content/uploads/2026/07/logo-main-1.png"
+    },
+    {
+      "name": "量感智能",
+      "logo": "",
+      "website": "",
+      "theme": "light",
+      "source": "",
+      "assetSource": ""
+    },
+    {
+      "name": "伏曦量子",
+      "logo": "",
+      "website": "",
+      "theme": "light",
+      "source": "",
+      "assetSource": ""
+    },
+    {
+      "name": "未来启点社区",
+      "logo": "",
+      "website": "",
+      "theme": "light",
+      "source": "",
+      "assetSource": ""
+    },
+    {
+      "name": "酉术量子",
+      "logo": "assets/partners/unitarylab.svg",
+      "website": "https://unitarylab.com/",
+      "theme": "dark",
+      "source": "https://unitarylab.com/",
+      "assetSource": "https://unitarylab.com/icons/logo.svg"
+    },
+    {
+      "name": "希微智源",
+      "logo": "",
+      "website": "",
+      "theme": "light",
+      "source": "",
+      "assetSource": ""
+    },
+    {
+      "name": "康龙化成",
+      "logo": "assets/partners/pharmaron.svg",
+      "website": "https://www.pharmaron.cn/",
+      "theme": "light",
+      "source": "https://www.pharmaron.cn/",
+      "assetSource": "https://www.pharmaron.cn/"
+    },
+    {
+      "name": "华大生命科学研究院",
+      "logo": "assets/partners/bgi-research.png",
+      "website": "https://research.genomics.cn/",
+      "theme": "light",
+      "source": "https://research.genomics.cn/",
+      "assetSource": "https://research.genomics.cn/public/img/logo-blue.png?v=1"
+    },
+    {
+      "name": "华翊量子",
+      "logo": "",
+      "website": "",
+      "theme": "light",
+      "source": "",
+      "assetSource": ""
+    },
+    {
+      "name": "工商银行软件开发中心",
+      "logo": "assets/partners/icbc.jpg",
+      "website": "https://www.icbc-ltd.com/",
+      "theme": "light",
+      "source": "https://www.icbc-ltd.com/",
+      "assetSource": "https://www.icbc-ltd.com/SiteCollectionDocuments/ICBC/Resources/ICBCLTD/%e5%9b%be%e7%89%87/2012%e4%b8%ad%e6%96%87%e6%94%b9%e7%89%88%e5%9b%be%e7%89%87/logo2.jpg"
+    },
+    {
+      "name": "中科酷原",
+      "logo": "assets/partners/cascoldatom.png",
+      "website": "https://www.cascoldatom.com/index.php",
+      "theme": "light",
+      "source": "https://www.cascoldatom.com/index.php",
+      "assetSource": "https://www.cascoldatom.com/attach/202403/1709507669206846512.png"
+    },
+    {
+      "name": "申能诚毅",
+      "logo": "",
+      "website": "",
+      "theme": "light",
+      "source": "",
+      "assetSource": ""
+    },
+    {
+      "name": "逻辑比特",
+      "logo": "assets/partners/logicalqubit.svg",
+      "website": "https://logicalqubit.com/",
+      "theme": "dark",
+      "source": "https://logicalqubit.com/",
+      "assetSource": "https://logicalqubit.com/uploads/image/20260126/6976dd0ee3d51.svg"
+    },
+    {
+      "name": "幂波隧力",
+      "logo": "",
+      "website": "",
+      "theme": "light",
+      "source": "",
+      "assetSource": ""
+    },
+    {
+      "name": "太一量生",
+      "logo": "",
+      "website": "",
+      "theme": "light",
+      "source": "",
+      "assetSource": ""
+    },
+    {
+      "name": "铁马量子实验室",
+      "logo": "",
+      "website": "",
+      "theme": "light",
+      "source": "",
+      "assetSource": ""
+    },
+    {
+      "name": "量观知元",
+      "logo": "",
+      "website": "",
+      "theme": "light",
+      "source": "",
+      "assetSource": ""
+    },
+    {
+      "name": "量子元匙",
+      "logo": "",
+      "website": "",
+      "theme": "light",
+      "source": "",
+      "assetSource": ""
+    }
+  ]
+}

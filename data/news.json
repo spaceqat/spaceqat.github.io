@@ -1,0 +1,38 @@
+[
+  {
+    "id": "pujiang-quantum-talk",
+    "title": "浦江量话｜量子界的“奇葩说”：让玄学不玄，让神话不神",
+    "summary": "从“玄学”到科学，从“神话”到理解。走进浦江量话，一起打开关于量子的讨论。",
+    "category": "活动交流",
+    "date": null,
+    "url": "https://mp.weixin.qq.com/s/DQxBe7qwQh8dn3xB25d0ww",
+    "source": "微信文章",
+    "label": "浦江量话",
+    "featured": true,
+    "published": true
+  },
+  {
+    "id": "fatqat-0-1-0a2",
+    "title": "FatQat 0.1.0a2 版本发布",
+    "summary": "新增教程，更新编译与扩展接口，完善文档和示例。",
+    "category": "工具更新",
+    "date": "2026-10-04",
+    "url": "https://github.com/spaceqat/fatqat/releases/tag/v0.1.0a2",
+    "source": "GitHub Releases",
+    "label": "开源进展",
+    "featured": false,
+    "published": true
+  },
+  {
+    "id": "spaceqat-community-launch",
+    "title": "量立方开源社区正式发布",
+    "summary": "量立方在浦江创新论坛发布，连接科研、教育、产业与全球开发者。",
+    "category": "社区新闻",
+    "date": "2026-09-13",
+    "url": "https://stcsm.sh.gov.cn/xwzx/mtjj/20260915/3988257ec9fe45f5a7fa3437d5bade27.html",
+    "source": "上海市科学技术委员会",
+    "label": "社区启程",
+    "featured": false,
+    "published": true
+  }
+]
