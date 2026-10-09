@@ -1,6 +1,16 @@
 # 量立方 SpaceQat 官网
 
-连接科研、教育、产业与全球开发者的量子开源社区。首页保留“开放每一面，叠加无限可能。”与“We built a SPACE for Quantum.”，以社区活动与交流为先，FatQat 是社区中的开源工具项目。
+连接科研、教育、产业与全球开发者的量子开源社区。首页保留“开放每一面，叠加无限可能。”与“We build a SPACE for Quantum.”，通过品牌介绍、FatQat 开源工具、参与方式、社区动态与伙伴生态串联内容。
+
+## 第五版首页布局
+
+首页使用 `assets/home.css` 和 `assets/home.js`；活动列表使用 `assets/events.css` 与同一套首页样式，两页共用 `assets/community.js` 与 `assets/navigation.js`。无需构建，使用静态 HTTP 服务即可预览。
+
+- 首屏采用居中宣言，随后交替使用深蓝与浅色章节。FatQat 分为表达、编译、仿真与连接四步；面向各种量子比特体系描述硬件约束，真实硬件接口使用“将会陆续开放”的表述。
+- 正文字号：桌面 18px，手机 16px；辅助文字至少 14px；首屏标题 34–88px，章节标题按屏宽缩放。
+- 三类参与者直接展示；新闻保留同一数据源，以首条重点内容和两条简讯呈现；伙伴分组和生成标记保留。
+- 菜单断点为 900px。首屏开盒、SPACE 维度、FatQat 流程、伙伴滚动和尾部动效均采用渐进增强，正文不会依赖 JavaScript 才能出现；减少动态效果偏好会关闭动效。
+- 本地检查覆盖 1440、768、390、320px 宽度、横向溢出、菜单、资源与页面锚点。
 
 网站仓库：https://github.com/spaceqat/spaceqat.github.io  
 网站域名：https://space-qat.com
@@ -51,7 +61,7 @@
 
 ## 共建伙伴
 
-保留“指导单位 / 共同发起方 / 委员单位 / 共建伙伴”的分组。共建伙伴按首次出现的顺序去除重复名称，新增“量观知元”“量子元匙”。采用响应式 Logo 展示墙；没有确认官方 Logo 的机构使用文字卡片。
+保留“指导单位 / 共同发起方 / 委员单位 / 共建伙伴”的分组。共建伙伴按首次出现的顺序去除重复名称，采用响应式 Logo 展示墙和可暂停的双排滚动；没有确认 Logo 的机构使用文字卡片。
 
 - 机构清单与 Logo 配置：[`data/partners.json`](data/partners.json)。
 - 图片：`assets/partners/`。来源及未找到素材的说明见 [`SOURCES.md`](assets/partners/SOURCES.md)。
@@ -70,12 +80,14 @@ python3 -m http.server 8000
 
 ## 页面与资源
 
-- `index.html`：首页内容、参与方式、编译路线与受众切换。
+- `index.html`：首页内容、参与方式、开源工具与伙伴展示。
 - `events.html`：活动与动态完整列表。
-- `assets/site.css`：共享的基础样式、本地字体和既有页面布局。
-- `assets/community.css`：社区卡片、活动页、伙伴 Logo 展示墙及移动端布局。
+- `assets/home.css`：首页与活动页共享的字体、色彩、布局及动效。
+- `assets/events.css`：活动页的专用布局、筛选区与列表卡片。
+- `assets/community.css`：社区卡片与伙伴 Logo 的基础样式。
 - `assets/community.js`：动态读取、筛选、搜索与加载更多；文本安全渲染，链接仅允许 HTTPS。
 - `assets/navigation.js`：活动页的移动导航。
+- `docs/membership-badges.md`：会员与 Badge 体系的方案草案；账号、申请和服务端权限尚未上线。
 - `assets/fonts/`：本地 Manrope、Noto Sans SC 与 Noto Serif SC 字体子集及许可证。新增字形缺失时回落至系统字体。
 - `assets/quantum-architecture.webp`、`open-foundations.webp`、`quantum-horizon.webp`：原有生成概念艺术，不是真实设备照片；提示词保存在 `IMAGE-PROMPT*.txt`。
 
@@ -91,4 +103,4 @@ python3 -m http.server 8000
 
 SpaceQat 社区定位 → 活动与交流 → 开源工具 FatQat → 开放基座 → 参与方式 → 共建伙伴。保留协作者的社区介绍与 FatQat 技术表述。
 
-FatQat 当前公开编译目标为超导、中性原子；更多体系持续探索，真实量子硬件接入属于后续计划。技术依据：[编译指南](https://fatqat.readthedocs.io/en/latest/guide/compiler/)、[Compiler API](https://fatqat.readthedocs.io/en/latest/api/compiler/)、[执行模型](https://fatqat.readthedocs.io/en/latest/guide/execution-models/)。
+FatQat 面向各种量子比特体系，将连接、移动、融合等硬件约束纳入编译与控制流程；社区将持续探索更多物理路线，并陆续开放不同路线的真实硬件接口。技术依据：[Compiler API](https://fatqat.readthedocs.io/en/latest/api/compiler/)、[执行模型](https://fatqat.readthedocs.io/en/latest/guide/execution-models/)。

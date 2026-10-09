@@ -12,11 +12,11 @@
   "initiators": [
     {
       "name": "水木络绎",
-      "logo": "",
+      "logo": "assets/partners/shuimu-luoyi.png",
       "website": "",
       "theme": "light",
       "source": "",
-      "assetSource": ""
+      "assetSource": "user-provided"
     },
     {
       "name": "通源量智",
@@ -46,29 +46,29 @@
     },
     {
       "name": "上海物理智能与机器人研究院",
-      "logo": "",
+      "logo": "assets/partners/pair.jpg",
       "website": "",
       "theme": "light",
       "source": "",
-      "assetSource": ""
+      "assetSource": "user-provided"
     }
   ],
   "partners": [
     {
       "name": "中电信量子集团",
-      "logo": "",
+      "logo": "assets/partners/china-telecom-quantum.png",
       "website": "",
       "theme": "light",
       "source": "",
-      "assetSource": ""
+      "assetSource": "user-provided"
     },
     {
       "name": "璇相科技",
-      "logo": "",
+      "logo": "assets/partners/xuanxiang.png",
       "website": "",
       "theme": "light",
       "source": "",
-      "assetSource": ""
+      "assetSource": "user-provided"
     },
     {
       "name": "壁仞科技",
@@ -92,7 +92,7 @@
       "website": "https://www.quantum-info.com/",
       "theme": "light",
       "source": "https://www.quantum-info.com/",
-      "assetSource": "https://www.quantum-info.com/templets/gdlz/images/img/logo.png"
+      "assetSource": "user-provided"
     },
     {
       "name": "晶科能源",
@@ -128,27 +128,27 @@
     },
     {
       "name": "量感智能",
-      "logo": "",
+      "logo": "assets/partners/lianggan-intelligence.jpg",
       "website": "",
       "theme": "light",
       "source": "",
-      "assetSource": ""
+      "assetSource": "user-provided"
     },
     {
       "name": "伏曦量子",
-      "logo": "",
+      "logo": "assets/partners/fuxi.png",
       "website": "",
-      "theme": "light",
+      "theme": "dark",
       "source": "",
-      "assetSource": ""
+      "assetSource": "user-provided"
     },
     {
       "name": "未来启点社区",
-      "logo": "",
+      "logo": "assets/partners/future-engine-community.jpg",
       "website": "",
       "theme": "light",
       "source": "",
-      "assetSource": ""
+      "assetSource": "user-provided"
     },
     {
       "name": "酉术量子",
@@ -160,11 +160,11 @@
     },
     {
       "name": "希微智源",
-      "logo": "",
+      "logo": "assets/partners/xiwei-zhiyuan.jpg",
       "website": "",
       "theme": "light",
       "source": "",
-      "assetSource": ""
+      "assetSource": "user-provided"
     },
     {
       "name": "康龙化成",
@@ -184,11 +184,11 @@
     },
     {
       "name": "华翊量子",
-      "logo": "",
+      "logo": "assets/partners/huayi-quantum.png",
       "website": "",
       "theme": "light",
       "source": "",
-      "assetSource": ""
+      "assetSource": "user-provided"
     },
     {
       "name": "工商银行软件开发中心",
@@ -208,11 +208,11 @@
     },
     {
       "name": "申能诚毅",
-      "logo": "",
+      "logo": "assets/partners/shenergy-chengyi.jpg",
       "website": "",
       "theme": "light",
       "source": "",
-      "assetSource": ""
+      "assetSource": "user-provided"
     },
     {
       "name": "逻辑比特",
@@ -224,35 +224,35 @@
     },
     {
       "name": "幂波隧力",
-      "logo": "",
+      "logo": "assets/partners/mibo-suili.jpg",
       "website": "",
       "theme": "light",
       "source": "",
-      "assetSource": ""
+      "assetSource": "user-provided"
     },
     {
       "name": "太一量生",
-      "logo": "",
+      "logo": "assets/partners/taiyi-liangsheng.jpg",
       "website": "",
-      "theme": "light",
+      "theme": "dark",
       "source": "",
-      "assetSource": ""
+      "assetSource": "user-provided"
     },
     {
       "name": "铁马量子实验室",
-      "logo": "",
+      "logo": "assets/partners/ferroq-lab.jpg",
       "website": "",
       "theme": "light",
       "source": "",
-      "assetSource": ""
+      "assetSource": "user-provided"
     },
     {
       "name": "量观知元",
-      "logo": "",
+      "logo": "assets/partners/liangguan-zhiyuan.jpg",
       "website": "",
       "theme": "light",
       "source": "",
-      "assetSource": ""
+      "assetSource": "user-provided"
     },
     {
       "name": "量子元匙",

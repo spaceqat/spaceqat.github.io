@@ -52,7 +52,11 @@
     }
     body.append(meta, element('h3', '', item.title), element('p', '', item.summary));
     const foot = element('div', 'community-card-foot');
-    foot.append(element('span', '', item.source || '社区动态'), element('span', 'community-read', '阅读原文 ↗'));
+    const read = element('span', 'community-read', '阅读原文 ');
+    const arrow = element('span', 'community-read-arrow', '↗');
+    arrow.setAttribute('aria-hidden', 'true');
+    read.append(arrow);
+    foot.append(element('span', '', item.source || '社区动态'), read);
     body.append(foot);
     link.append(visual, body);
     article.append(link);

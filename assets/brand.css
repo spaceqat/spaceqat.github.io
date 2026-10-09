@@ -1,0 +1,6 @@
+/* User-supplied SpaceQat mark: preserve its original black and lime colors. */
+.wordmark .brand-logo{display:block;width:58px;height:50px;flex-shrink:0;object-fit:contain;padding:4px;background:#fff;border-radius:10px}
+.closing-image{opacity:1;object-position:center bottom}
+.closing:before{background:linear-gradient(180deg,#050d19 0%,#050d1933 38%,transparent 70%)}
+.tool-picture:after{background:linear-gradient(90deg,#05121c80,transparent 65%)}
+@media(max-width:600px){.wordmark{gap:10px}.wordmark .brand-logo{width:46px;height:42px;border-radius:8px;padding:3px}.closing-image{object-position:58% bottom}.tool-picture img{object-position:64% center}}

@@ -16,6 +16,7 @@
   document.addEventListener('click', event => { if (!event.target.closest('.header')) close(); });
   const scroll = () => header.classList.toggle('scrolled', window.scrollY > 35);
   window.addEventListener('scroll', scroll, { passive: true }); scroll();
-  window.matchMedia('(max-width:600px)').addEventListener('change', event => { if (!event.matches) close(); });
+  const menuWidth = document.documentElement.dataset.designVersion === '5' ? 900 : 600;
+  window.matchMedia(`(max-width:${menuWidth}px)`).addEventListener('change', event => { if (!event.matches) close(); });
   document.querySelector('#year').textContent = new Date().getFullYear();
 })();
