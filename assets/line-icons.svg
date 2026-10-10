@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <!-- Original SpaceQat line icons. Shared 64-unit grid; colors inherit from the page. -->
+  <symbol id="program" viewBox="0 0 64 64">
+    <path d="M56 34V10H8v44h28M8 22h48"/>
+    <path d="M15 16h2m5 0h2M22 31l-6 6 6 6m10-12 6 6-6 6"/>
+    <path d="M40 46h5m10 0h5"/><rect x="45" y="40" width="10" height="12" rx="1"/>
+  </symbol>
+  <symbol id="compile" viewBox="0 0 64 64">
+    <path d="M7 12h11m10 0h29M7 24h33m8 0h9"/>
+    <rect x="18" y="7" width="10" height="10" rx="1"/>
+    <circle cx="44" cy="12" r="2" fill="currentColor" stroke="none"/>
+    <path d="M44 14v14"/><circle cx="44" cy="24" r="4"/>
+    <path d="M32 32v8m-4-4 4 4 4-4"/>
+    <path d="m16 49 12 5m8 0 12-5"/>
+    <circle cx="12" cy="48" r="4"/><circle cx="32" cy="56" r="4"/><circle cx="52" cy="48" r="4"/>
+  </symbol>
+  <symbol id="simulate" viewBox="0 0 64 64">
+    <path d="M9 10v44h47M9 20h4m-4 14h4m-4 10h4m10 10v-4m14 4v-4m14 4v-4"/>
+    <path d="M15 39c5 0 5-23 11-23s6 29 12 29 6-20 12-20h6"/>
+  </symbol>
+  <symbol id="hardware" viewBox="0 0 64 64">
+    <path d="M44 40V16H16v28h24M23 9v7m9-7v7m9-7v7M9 23h7m-7 9h7m-7 9h7M23 44v7m9-7v7M44 23h7m-7 9h7"/>
+    <rect x="24" y="24" width="12" height="12" rx="1"/>
+    <path d="M43 51h7a6 6 0 0 0 6-6v-2m-10 0h10v-10"/>
+  </symbol>
+  <symbol id="research" viewBox="0 0 64 64">
+    <path d="M32 17C25 12 16 11 7 13v36c9-2 18-1 25 4 7-5 16-6 25-4V13c-9-2-18-1-25 4v36"/>
+    <path d="M15 23c4 0 7 1 10 2m-10 7c4 0 7 1 10 2m14-9c3-1 6-2 10-2m-10 11c3-1 6-2 10-2"/>
+  </symbol>
+  <symbol id="build" viewBox="0 0 64 64">
+    <path d="M38 12H9v33h16M25 25h30v30H25zM9 21h29M38 12v7"/>
+    <path d="m36 34-6 6 6 6m8-12 6 6-6 6M15 16h2"/>
+  </symbol>
+  <symbol id="community" viewBox="0 0 64 64">
+    <circle cx="32" cy="12" r="6"/><circle cx="12" cy="48" r="6"/><circle cx="52" cy="48" r="6"/>
+    <path d="M29 18 15 42m20-24 14 24M18 48h28M32 25v8m-6 4-6 4m18-4 6 4"/>
+  </symbol>
+</svg>
