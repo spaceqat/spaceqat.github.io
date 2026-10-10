@@ -35,4 +35,7 @@
     <circle cx="32" cy="12" r="6"/><circle cx="12" cy="48" r="6"/><circle cx="52" cy="48" r="6"/>
     <path d="M29 18 15 42m20-24 14 24M18 48h28M32 25v8m-6 4-6 4m18-4 6 4"/>
   </symbol>
+  <symbol id="arrow-up-right" viewBox="0 0 24 24">
+    <path d="M6 18 18 6M6 6h12v12"/>
+  </symbol>
 </svg>

@@ -33,6 +33,19 @@
     return node;
   }
 
+  function linkArrow() {
+    const namespace = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(namespace, 'svg');
+    svg.setAttribute('class', 'link-arrow');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.setAttribute('focusable', 'false');
+    const use = document.createElementNS(namespace, 'use');
+    use.setAttribute('href', 'assets/line-icons.svg#arrow-up-right');
+    svg.append(use);
+    return svg;
+  }
+
   function validEntry(item) {
     if (!item || item.published === false) return false;
     if (!['id', 'title', 'summary', 'category', 'url'].every(key => typeof item[key] === 'string' && item[key].trim())) return false;
@@ -55,7 +68,10 @@
     visual.dataset.kind = item.categoryKey;
     visual.setAttribute('aria-hidden', 'true');
     visual.append(element('span', 'community-art-label', item.label || item.category));
-    visual.append(element('span', 'community-art-mark', item.categoryKey === '工具更新' ? '{ }' : '↗'));
+    const mark = element('span', 'community-art-mark');
+    if (item.categoryKey === '工具更新') mark.textContent = '{ }';
+    else mark.append(linkArrow());
+    visual.append(mark);
     const body = element('div', 'community-card-body');
     const meta = element('div', 'community-card-meta');
     meta.append(element('span', 'community-category', item.category));
@@ -69,7 +85,8 @@
     body.append(meta, element('h3', '', item.title), element('p', '', item.summary));
     const foot = element('div', 'community-card-foot');
     const read = element('span', 'community-read', copy.read);
-    const arrow = element('span', 'community-read-arrow', '↗');
+    const arrow = element('span', 'community-read-arrow');
+    arrow.append(linkArrow());
     arrow.setAttribute('aria-hidden', 'true');
     read.append(arrow);
     foot.append(element('span', '', item.source || copy.fallbackSource), read);
