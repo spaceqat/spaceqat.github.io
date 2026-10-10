@@ -220,7 +220,7 @@
       "website": "https://www.icbc-ltd.com/",
       "theme": "light",
       "source": "https://www.icbc-ltd.com/",
-      "assetSource": "https://www.icbc-ltd.com/SiteCollectionDocuments/ICBC/Resources/ICBCLTD/%e5%9b%be%e7%89%87/2012%e4%b8%ad%e6%96%87%e6%94%b9%e7%89%88%e5%9b%be%e7%89%87/logo2.jpg"
+      "assetSource": "user-provided"
     },
     {
       "name": "中科酷原",
@@ -287,12 +287,12 @@
     },
     {
       "name": "量子元匙",
-      "nameEn": "Quantum Key",
-      "logo": "",
+      "nameEn": "Quantum Meta Key",
+      "logo": "assets/partners/quantum-meta-key.jpg",
       "website": "",
       "theme": "light",
       "source": "",
-      "assetSource": ""
+      "assetSource": "user-provided"
     }
   ]
 }

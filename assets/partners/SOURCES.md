@@ -6,6 +6,7 @@
 
 | 名称 | 本地文件 | 官方页面 | 图片来源 | 说明 |
 | --- | --- | --- | --- | --- |
+| 量子元匙 | `quantum-meta-key.jpg` |  | 用户提供 | 原样保存，保留品牌颜色与比例；英文名称按标识使用 Quantum Meta Key。 |
 | 未来启点社区 | `future-engine-community.jpg` |  | 用户提供 | 原样保存；保留品牌颜色与比例。 |
 | 希微智源 | `xiwei-zhiyuan.jpg` |  | 用户提供 | 原样保存；保留品牌颜色与比例。 |
 | 申能诚毅 | `shenergy-chengyi.jpg` |  | 用户提供 | 原样保存；按用户指定使用申能集团品牌标识。 |
@@ -35,12 +36,8 @@
 | 华大生命科学研究院 | `bgi-research.png` | https://research.genomics.cn/ | https://research.genomics.cn/public/img/logo-blue.png?v=1 | 官网标识，原样下载。 |
 | 国盾量子 | `quantumctek.png` | https://www.quantum-info.com/ | 用户提供 | 用户提供的新版机构标识；由 JPEG 转换为 PNG，以保持现有资源路径不变。 |
 | 伏曦量子 | `fuxi.png` |  | 用户提供 | 用户提供的机构标识；保持完整画面比例，等比缩放为适合网页加载的尺寸。 |
-| 工商银行软件开发中心 | `icbc.jpg` | https://www.icbc-ltd.com/ | https://www.icbc-ltd.com/SiteCollectionDocuments/ICBC/Resources/ICBCLTD/%e5%9b%be%e7%89%87/2012%e4%b8%ad%e6%96%87%e6%94%b9%e7%89%88%e5%9b%be%e7%89%87/logo2.jpg | parent-brand: 中国工商银行官方企业标志；软件开发中心未找到独立标识。 |
+| 工商银行软件开发中心 | `icbc.jpg` | https://www.icbc-ltd.com/ | 用户提供 | 使用用户提供的中国工商银行标识，原样保存，保留品牌颜色与比例。 |
 
-## 保留文字的机构
+## 用户确认的机构标识
 
-尚未在页面配置标识：量子元匙。
-
-新增名称“量观知元”和“量子元匙”按需求原文保留。“量子元匙”未找到可靠的精确品牌对应；未用名称近似的公司替代。
-
-量观知元现使用用户提供的 Logo。
+“量观知元”和“量子元匙”保留用户指定的中文名称，均使用用户提供的 Logo。
