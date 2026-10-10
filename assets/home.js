@@ -51,7 +51,7 @@
       observer.unobserve(entry.target);
     });
   }, { threshold: .12 });
-  document.querySelectorAll('.section-heading, .about-layout, .audience-card').forEach(item => observer.observe(item));
+  document.querySelectorAll('.section-heading, .about-layout, .audience-card, .contact-card').forEach(item => observer.observe(item));
   const sequenceObserver = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (!entry.isIntersecting) return;
