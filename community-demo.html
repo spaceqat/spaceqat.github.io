@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07131b">
+  <meta name="robots" content="noindex,nofollow">
+  <title>我的空间 · SpaceQat 社区 Demo</title>
+  <link rel="icon" href="assets/spaceqat-logo.png">
+  <link rel="stylesheet" href="assets/member-demo.css?v=membership-4">
+  <script src="assets/member-demo.js?v=membership-4" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">跳至内容</a>
+  <header class="topbar">
+    <a class="brand" href="index.html?v=membership-4"><img src="assets/spaceqat-logo.png" alt="" width="44" height="40"><span>量立方 <b>SpaceQat</b></span></a>
+    <span class="preview-label">COMMUNITY / 交互预览</span>
+    <a class="back-home" href="index.html?v=membership-4">返回官网 ↗</a>
+  </header>
+  <div class="demo-banner"><span><i></i> Demo · 全部人物、帖子与认证均为示例，数据仅保存在当前浏览器。</span><button id="reset-demo" class="quiet">重置体验</button></div>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <p class="nav-caption">YOUR OPEN SPACE</p>
+      <nav aria-label="社区导航">
+        <a href="#profile" data-view="profile"><span>◈</span> 我的空间 <small>01</small></a>
+        <a href="#badges" data-view="badges"><span>◇</span> 徽章收藏 <small>02</small></a>
+        <a href="#forum" data-view="forum"><span>☷</span> 社区论坛 <small>03</small></a>
+        <a href="#submissions" data-view="submissions"><span>↗</span> 我的投稿 <small>04</small></a>
+        <a href="#moderation" data-view="moderation"><span>⊞</span> 审核工作台 <small id="pending-count">0</small></a>
+      </nav>
+      <div class="sidebar-note"><div class="mini-orbit" aria-hidden="true">✦</div><strong>每一份贡献<br>都值得被看见。</strong><p>开放每一面，<br>叠加无限可能。</p></div>
+      <div class="session-box"><span class="avatar small">林</span><div><strong id="session-name">体验会员</strong><small id="session-role">模拟登录</small></div><button id="session-button" class="quiet">退出</button></div>
+    </aside>
+    <main id="main" tabindex="-1"></main>
+  </div>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <dialog id="modal"><button class="dialog-close" type="button" aria-label="关闭对话框">×</button><div id="modal-body"></div></dialog>
+  <noscript><p class="no-script">请启用 JavaScript 体验会员中心与论坛。<a href="index.html?v=membership-4">返回官网</a></p></noscript>
+</body>
+</html>

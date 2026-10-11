@@ -1,0 +1,43 @@
+SpaceQat 真实账号接入（尚未部署到线上）
+
+1. Supabase SQL Editor → New query，粘贴 001_members.sql 全文并 Run。
+   此脚本只运行一次。表名 member_profiles，不覆盖其他已有表。
+   包含 RLS：用户只可读取自己的资料，只可修改 display_name / bio；
+   不允许客户端创建资料、删资料、改 id、积分或创建时间。
+   触发器随注册创建零积分资料；不会导入 Demo 用户、积分或权限。
+
+2. Authentication → URL Configuration：
+   Site URL: https://space-qat.com/account.html
+   Redirect URLs 添加以下精确地址（不要使用全站通配符）：
+   https://space-qat.com/account.html
+   https://space-qat.com/account.html?lang=en
+   http://127.0.0.1:8765/account.html
+   http://127.0.0.1:8765/account.html?lang=en
+   上线后如不再需要本地测试，移除本地地址。
+
+3. Authentication 邮箱认证：允许 Email 注册、开启 Confirm Email；
+   密码长度至少 12 位，服务端设置也必须同步；不启用匿名登录。
+   验证和恢复邮件模板保留官方 ConfirmationURL，不填入首页链接。
+
+4. 配置 Custom SMTP 才能面向公众发邮件。
+   默认邮件服务仅允许项目团队邮箱，官方限制为每小时 2 封，不适合生产。
+   SMTP 密码只在控制台填写，绝不能提交到 Git 或前端。
+   验证发信域名 SPF/DKIM/DMARC，并测试常用邮箱收件及垃圾邮件。
+   上线前设置服务端限流；若启用 CAPTCHA，需先在前端添加组件与 captchaToken，
+   当前页面尚未接入 CAPTCHA，不能仅在控制台开启后直接发布。
+
+5. 本地访问 account.html#signup（英文 account.html?lang=en#signup）。
+   用自己控制的邮箱测试注册 → 验证 → 登录 → 修改资料 → 刷新 → 退出。
+   测试重发验证邮件、密码恢复、新密码登录、旧密码失效、过期链接提示。
+   浏览器前端使用固定版本 supabase-js SDK，密码仅发送给 Supabase Auth。
+   SDK 会在本浏览器保存会话，不保存明文密码。不同域名不共享会话。
+
+6. 上线验收：用两个测试账号确认 A 不能读改 B，不能改积分；游客无资料访问。
+   数据库脚本未执行前，注册可能创建 Auth 用户，但资料页会提示尚未就绪。
+   不可将前端测试/mock 视为数据库安全测试已通过。
+   尚未实现 Badge 发放、正式论坛、Notion 同步、管理员审核、账户删除界面。
+   Demo 保留在 community-demo.html，与正式账号完全分离。
+   公开发布前还需确认隐私告知与数据删除联系流程。
+
+参考：https://supabase.com/docs/guides/auth/managing-user-data
+参考：https://supabase.com/docs/guides/auth/auth-smtp

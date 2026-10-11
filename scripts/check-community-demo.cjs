@@ -1,0 +1,111 @@
+/* Run with the bundled Node runtime. PLAYWRIGHT_MODULE may point to its Playwright package. */
+const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const assert = require('node:assert/strict');
+(async () => {
+  const browser = await chromium.launch({headless:true, channel:process.env.PLAYWRIGHT_CHANNEL || 'msedge'});
+  const page = await browser.newPage({viewport:{width:1440,height:1050}});
+  const errors=[];
+  page.on('pageerror', e=>errors.push(e.message));
+  page.on('response', r=>{if(r.status()>=400)errors.push(`${r.status()} ${r.url()}`);});
+  const root='http://127.0.0.1:8765/community-demo.html';
+  const homepageResponse=await page.goto('http://127.0.0.1:8765/index.html');
+  assert.match(homepageResponse.headers()['cache-control'] || '', /no-store/, 'Preview must not cache old navigation');
+  for(const source of ['community-demo.html','events.html','contact.html','en.html']){
+    await page.goto('http://127.0.0.1:8765/'+source);
+    await page.locator('a[href^="index.html?v=membership-4"]').first().click();
+    await page.locator('.nav-cta').waitFor({state:'visible'});
+    assert.match(await page.locator('.nav-cta').innerText(), /注册\s*\/\s*登录/, source+' return navigation');
+    assert.equal(await page.locator('.nav-cta').getAttribute('href'),'account.html#signup');
+  }
+  const go=async hash=>{await page.goto(root+'#'+hash);};
+  const settle=async()=>{await page.evaluate(async()=>{await document.fonts.ready;await Promise.all(document.getAnimations().map(a=>a.finished.catch(()=>{})));document.querySelector('#toast').classList.remove('show');});};
+  for(const homepage of ['index.html','en.html']){
+    await page.goto('http://127.0.0.1:8765/'+homepage);
+    assert.equal(await page.locator('.nav-cta').getAttribute('href'),homepage==='en.html'?'account.html?lang=en#signup':'account.html#signup');
+    await page.goto(root+'#join');
+    await page.getByRole('heading',{name:'注册体验',exact:true}).waitFor();
+  }
+  await page.getByLabel('体验昵称',{exact:true}).fill('注册体验者');
+  await page.getByLabel('我了解这是本地演示，贡献和徽章为示例数据。').check();
+  await page.getByRole('button',{name:'创建体验档案 →'}).click();
+  await page.getByRole('heading',{name:'你好，注册体验者。'}).waitFor();
+  await page.locator('#reset-demo').click();
+  await page.locator('#confirm-reset').click();
+  await go('profile');
+  await page.getByRole('heading',{name:'你好，林小满。'}).waitFor();
+  await settle();
+  await page.screenshot({path:'C:/Users/Administrator/AppData/Local/Temp/spaceqat-member-desktop.png',fullPage:true});
+  await page.getByRole('button',{name:'编辑资料',exact:true}).click();
+  await page.getByLabel('用户名',{exact:true}).fill('测试共建者');
+  await page.getByRole('button',{name:'保存资料',exact:true}).click();
+  await page.getByRole('heading',{name:'你好，测试共建者。'}).waitFor();
+  await go('forum');
+  await page.getByRole('button',{name:'＋ 发布帖子',exact:true}).click();
+  await page.getByLabel('标题',{exact:true}).fill('审核流程测试');
+  await page.getByLabel('正文',{exact:true}).fill('初稿内容 <img src=x onerror=alert(1)>');
+  await page.getByRole('button',{name:'提交审核 →',exact:true}).click();
+  await page.getByRole('heading',{name:'审核流程测试',exact:true}).waitFor();
+  await go('forum');
+  assert.equal(await page.getByRole('button',{name:'审核流程测试',exact:true}).count(),0,'Pending post leaked');
+  await go('moderation');
+  await page.getByRole('button',{name:'进入审核员演示',exact:true}).click();
+  await page.getByRole('button',{name:'退回修改',exact:true}).click();
+  await page.getByLabel('修改建议',{exact:true}).fill('请补充复现过程');
+  await page.getByRole('button',{name:'确认退回',exact:true}).click();
+  await go('submissions');
+  await page.getByText('审核意见：请补充复现过程',{exact:true}).waitFor();
+  await page.getByRole('button',{name:'继续编辑',exact:true}).click();
+  await page.getByLabel('正文',{exact:true}).fill('修订后的内容 <script>alert(1)</script>');
+  await page.getByRole('button',{name:'提交审核 →',exact:true}).click();
+  await go('moderation');
+  await page.getByRole('button',{name:'通过并发布',exact:true}).click();
+  await go('forum');
+  await page.getByRole('button',{name:'审核流程测试',exact:true}).click();
+  await page.locator('.body-copy').filter({hasText:'修订后的内容 <script>alert(1)</script>'}).waitFor();
+  assert.equal(await page.locator('.body-copy script').count(),0,'Unsafe HTML');
+  await page.getByRole('button',{name:'编辑帖子',exact:true}).click();
+  await page.getByLabel('正文',{exact:true}).fill('第三版本的已审核内容');
+  await page.getByRole('button',{name:'提交审核 →',exact:true}).click();
+  await go('forum');
+  await page.getByRole('button',{name:'审核流程测试',exact:true}).click();
+  await page.locator('.body-copy').filter({hasText:'修订后的内容 <script>alert(1)</script>'}).waitFor();
+  await go('moderation');
+  await page.getByRole('button',{name:'通过并发布',exact:true}).click();
+  await go('forum');
+  await page.getByRole('button',{name:'审核流程测试',exact:true}).click();
+  await page.locator('.body-copy').filter({hasText:'第三版本的已审核内容'}).waitFor();
+  await page.getByRole('button',{name:'写下回复',exact:true}).click();
+  await page.getByLabel('回复内容',{exact:true}).fill('这是一条需要审核的回复');
+  await page.getByRole('button',{name:'提交审核 →',exact:true}).click();
+  await go('moderation');
+  await page.getByRole('button',{name:'通过并发布',exact:true}).click();
+  await go('forum');
+  await page.getByRole('button',{name:'审核流程测试',exact:true}).click();
+  await page.getByText('这是一条需要审核的回复',{exact:true}).waitFor();
+  await go('profile');
+  await page.getByRole('button',{name:'编辑资料',exact:true}).click();
+  await page.getByLabel('公开个人主页',{exact:true}).uncheck();
+  await page.getByRole('button',{name:'保存资料',exact:true}).click();
+  await go('public/me');
+  await page.getByRole('heading',{name:'这份个人档案尚未公开。'}).waitFor();
+  await page.locator('#reset-demo').click();
+  await page.locator('#confirm-reset').click();
+  for(const width of [1440,768,390,320]){
+    await page.setViewportSize({width,height:900});
+    for(const hash of ['profile','badges','forum','submissions','moderation','public/me','join']){
+      await go(hash);
+      assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),`Overflow ${width} ${hash}`);
+    }
+  }
+  await page.setViewportSize({width:390,height:844});
+  await go('profile');
+  await settle();
+  await page.screenshot({path:'C:/Users/Administrator/AppData/Local/Temp/spaceqat-member-mobile.png',fullPage:true});
+  await page.setViewportSize({width:1440,height:1050});
+  await go('forum');
+  await settle();
+  await page.screenshot({path:'C:/Users/Administrator/AppData/Local/Temp/spaceqat-forum-desktop.png',fullPage:true});
+  assert.deepEqual(errors,[]);
+  console.log('PASS: homepage entry, demo registration, profile, moderation, safe text, revisions, replies, privacy and 28 responsive checks.');
+  await browser.close();
+})().catch(e=>{console.error(e);process.exit(1);});
