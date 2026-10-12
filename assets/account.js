@@ -11,15 +11,18 @@
   document.querySelector('#heading').textContent=t('你的开放空间。','Your open space.');
   document.querySelector('#subtitle').textContent=t('从一次连接开始，让每一份贡献被看见。','Connect with the community. Make your contributions count.');
   document.querySelector('#home').textContent=t('返回官网','Back to website');
-  document.querySelector('#home').href=en?'en.html?v=accounts-1':'index.html?v=accounts-1';
+  document.querySelector('#home').href=en?'en.html?v=community-2':'index.html?v=community-2';
   document.querySelector('#language').textContent=en?'中文':'EN';
   document.querySelector('#language').href=en?'account.html':'account.html?lang=en';
   document.querySelector('#privacy').textContent=t('邮箱用于验证身份和账号恢复，不在个人资料中公开。账号由 Supabase 提供认证服务。','Your email is used for verification and account recovery, not displayed in your profile. Authentication is provided by Supabase.');
   if (!window.supabase) { content.textContent=t('账号服务未能加载，请检查网络后刷新。','Unable to load authentication. Check your connection and reload.');return; }
-  const client=window.supabase.createClient('https://hvwsqebpeabfnndoxmwh.supabase.co','sb_publishable_NfSbd12D_UQwwPfnAPVKIw_CKyxv0-Y',{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:'implicit'}});
+  const client=window.spaceqatClient;
+  const tabs=document.createElement('nav');tabs.className='member-tabs';tabs.hidden=true;tabs.setAttribute('aria-label',t('个人空间导航','Personal space navigation'));
+  tabs.innerHTML=[['profile',t('个人资料','Profile')],['badges',t('我的徽章','My badges')],['forum',t('社区论坛','Forum')],['submissions',t('我的投稿','My posts')]].map(([id,label])=>`<a href="#${id}">${label}</a>`).join('');
+  content.before(tabs);
   const recoveryAtStart=new URLSearchParams(location.hash.slice(1)).get('type')==='recovery';
   const callbackError=new URLSearchParams(location.hash.slice(1)).get('error_description');
-  let recovery=recoveryAtStart, user=null, revision=0;
+  let recovery=recoveryAtStart, user=null, revision=0, authBusy=false;
   const callback=new URL('account.html',location.href);callback.search=en?'?lang=en':'';callback.hash='';
   const field=(name,label,type='text',extra='')=>`<label>${label}<input name="${name}" type="${type}" required ${extra}></label>`;
   const password=()=>field('password',t('密码（至少 12 位）','Password (at least 12 characters)'),'password','minlength="12" maxlength="128" autocomplete="new-password"');
@@ -28,6 +31,15 @@
   async function render(){
     const ticket=++revision;
     say('');
+    tabs.hidden=!(user&&!recovery);
+    document.querySelector('main').classList.toggle('member-space',!!user&&!recovery);
+    const view=location.hash.slice(1);
+    const activeView=['badges','forum','submissions','moderation'].includes(view)?view:'profile';
+    for(const a of tabs.querySelectorAll('a'))a.setAttribute('aria-current',a.hash==='#'+activeView?'page':'false');
+    if(user&&!recovery&&['badges','forum','submissions','moderation'].includes(view)){
+      await window.renderSpaceQatCommunity({client,user,view,content,t,escape,say,current:()=>ticket===revision});
+      return;
+    }
     if(user && !recovery){
       content.innerHTML=`<h2>${t('我的会员资料','My profile')}</h2><p class="email">${escape(user.email)}</p><p>${t('正在读取资料…','Loading profile…')}</p><button id="logout">${t('退出登录','Sign out')}</button>`;
       document.querySelector('#logout').onclick=logout;
@@ -39,7 +51,7 @@
         document.querySelector('#logout').onclick=logout;
         return;
       }
-      content.innerHTML=`<h2>${t('我的会员资料','My profile')}</h2><p class="email">${escape(user.email)}</p><form id="profile">${field('display_name',t('用户名','Display name'),'text',`maxlength="40" value="${escape(data.display_name)}"`)}<label>${t('个人介绍','Bio')}<textarea name="bio" maxlength="500">${escape(data.bio)}</textarea></label><button>${t('保存资料','Save profile')}</button></form><div class="stats">${t('贡献积分','Contribution points')}: ${Number(data.points)||0}<br>${t('徽章与论坛尚未接入；此处不展示 Demo 的示例奖励。','Badges and forum are not connected yet. Demo rewards are not used here.')}</div><button class="secondary" id="logout">${t('退出登录','Sign out')}</button>`;
+      content.innerHTML=`<h2>${t('我的会员资料','My profile')}</h2><p class="email">${escape(user.email)}</p><form id="profile">${field('display_name',t('用户名','Display name'),'text',`maxlength="40" value="${escape(data.display_name)}"`)}<label>${t('个人介绍','Bio')}<textarea name="bio" maxlength="500">${escape(data.bio)}</textarea></label><button>${t('保存资料','Save profile')}</button></form><div class="stats">${t('贡献积分','Contribution points')}: ${Number(data.points)||0}<div class="links"><a href="#badges">${t('查看我的徽章 ↗','View my badges ↗')}</a><a href="#forum">${t('进入社区论坛 ↗','Explore the forum ↗')}</a></div></div><button class="secondary" id="logout">${t('退出登录','Sign out')}</button>`;
       document.querySelector('#logout').onclick=logout;
       document.querySelector('#profile').onsubmit=e=>run(e,async f=>{const name=f.get('display_name').trim();if(!name)throw new Error('name');const {error}=await client.from('member_profiles').update({display_name:name,bio:f.get('bio').trim()}).eq('id',user.id);if(error)throw error;say(t('资料已保存。','Profile saved.'));});
       return;
@@ -66,9 +78,9 @@
       else say(t('请求已提交。如该邮箱符合条件，将收到邮件。请检查收件箱和垃圾邮件，按邮件指引继续。','Request submitted. If eligible, this address will receive an email. Check your inbox and spam folder to continue.'));
     });
   }
-  async function run(event,action){event.preventDefault();const form=event.currentTarget;const button=form.querySelector('button');button.disabled=true;say('');try{await action(new FormData(form));}catch(e){say(errors(e),true);}finally{button.disabled=false;}}
-  async function logout(){const {error}=await client.auth.signOut();if(error){say(errors(error),true);return;}user=null;recovery=false;await render();}
-  client.auth.onAuthStateChange((event,session)=>{user=session?.user||null;if(event==='PASSWORD_RECOVERY')recovery=true;if(event==='SIGNED_OUT')recovery=false;if(['SIGNED_OUT','SIGNED_IN','PASSWORD_RECOVERY'].includes(event))setTimeout(()=>render(),0);});
+  async function run(event,action){event.preventDefault();const form=event.currentTarget;const button=form.querySelector('button');button.disabled=true;authBusy=true;say('');try{await action(new FormData(form));}catch(e){say(errors(e),true);}finally{button.disabled=false;authBusy=false;}}
+  async function logout(){authBusy=true;try{const {error}=await client.auth.signOut();if(error){say(errors(error),true);return;}user=null;recovery=false;await render();}catch(e){say(errors(e),true);}finally{authBusy=false;}}
+  client.auth.onAuthStateChange((event,session)=>{const previous=user?.id;user=session?.user||null;if(event==='PASSWORD_RECOVERY')recovery=true;if(event==='SIGNED_OUT')recovery=false;if(!authBusy&&(previous!==user?.id||event==='PASSWORD_RECOVERY')&&['SIGNED_OUT','SIGNED_IN','PASSWORD_RECOVERY'].includes(event))setTimeout(()=>render(),0);});
   window.addEventListener('hashchange',()=>{if(!location.hash.includes('access_token'))render();});
   (async()=>{try{const {data,error}=await client.auth.getSession();if(error)throw error;user=data.session?.user||null;if(location.hash.includes('access_token')||callbackError)history.replaceState(null,'',callback.href);await render();if(callbackError)say(t('邮件链接已失效或无法验证，请重新申请邮件。','This email link is invalid or expired. Please request a new one.'),true);}catch(e){content.textContent=t('账号服务暂时不可用，请刷新重试。','Authentication is temporarily unavailable. Please reload.');}})();
 })();

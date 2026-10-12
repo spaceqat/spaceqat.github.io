@@ -1,4 +1,4 @@
-SpaceQat 真实账号接入（尚未部署到线上）
+SpaceQat 真实账号接入与数据库配置
 
 1. Supabase SQL Editor → New query，粘贴 001_members.sql 全文并 Run。
    此脚本只运行一次。表名 member_profiles，不覆盖其他已有表。
@@ -35,9 +35,30 @@ SpaceQat 真实账号接入（尚未部署到线上）
 6. 上线验收：用两个测试账号确认 A 不能读改 B，不能改积分；游客无资料访问。
    数据库脚本未执行前，注册可能创建 Auth 用户，但资料页会提示尚未就绪。
    不可将前端测试/mock 视为数据库安全测试已通过。
-   尚未实现 Badge 发放、正式论坛、Notion 同步、管理员审核、账户删除界面。
+   徽章与论坛接入见下文第二阶段。Notion 同步、自动贡献计分、账户删除界面尚未实现。
    Demo 保留在 community-demo.html，与正式账号完全分离。
    公开发布前还需确认隐私告知与数据删除联系流程。
 
 参考：https://supabase.com/docs/guides/auth/managing-user-data
 参考：https://supabase.com/docs/guides/auth/auth-smtp
+
+第二阶段：徽章与论坛
+
+在 001_members.sql 已成功执行的项目中，仅执行一次 002_community.sql。
+它新增 31 枚徽章目录、徽章授予表、投稿表和审核员表；保留现有会员资料。
+徽章按已确认的贡献授予，不根据注册或积分猜测授予；空账号显示未点亮。
+个人资料和邮箱仍仅对本人可见。论坛只返回已通过帖子、作者昵称和徽章。
+普通会员不能直接写入帖子表，提交 RPC 强制 pending，并限制 30 秒间隔、每小时 5 篇。
+用户不能直接改审核状态、授予徽章或修改审核员名单。审核员不能审核自己的帖子。
+当前版本支持文字发帖及审核；回复、附件、帖子修改和自动贡献积分不在此版本。
+
+在 SQL Editor 为指定人员赋予审核权限（先将占位邮箱替换成你确认的审核员邮箱）：
+insert into public.community_moderators(user_id)
+select id from auth.users where email='REPLACE_WITH_REVIEWER_EMAIL'
+on conflict do nothing;
+
+只有存在审核角色的账号才能在论坛看到“审核投稿”入口。
+通过 Database Table Editor / SQL Editor 人工核验后向 member_badges 插入 user_id 和 badge_id，即可点亮对应徽章。
+删除该授予记录会撤销徽章；前端没有自助授予权限。
+执行后用两个账号测试：A投稿仅A和审核员可见，B不能读取A待审核正文；审核后论坛可见。
+拒绝理由仅作者和审核员可见。自动积分升级尚未实现，需要按实施手册核验后管理。

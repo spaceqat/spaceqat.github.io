@@ -1,0 +1,50 @@
+/* Run with PGLITE_MODULE pointing to an installed @electric-sql/pglite package. */
+const {PGlite}=require(process.env.PGLITE_MODULE||'@electric-sql/pglite');
+const fs=require('node:fs');
+const assert=require('node:assert/strict');
+(async()=>{
+ const db=new PGlite();
+ await db.exec(`create role anon;create role authenticated;
+ create schema auth;create table auth.users(id uuid primary key,raw_user_meta_data jsonb);
+ create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
+ grant usage on schema public,auth to anon,authenticated;grant execute on function auth.uid() to anon,authenticated;`);
+ await db.exec(fs.readFileSync('supabase/001_members.sql','utf8'));
+ await db.exec(fs.readFileSync('supabase/002_community.sql','utf8'));
+ const a='00000000-0000-0000-0000-000000000001',b='00000000-0000-0000-0000-000000000002',mod='00000000-0000-0000-0000-000000000003';
+ for(const id of [a,b,mod])await db.query('insert into auth.users values ($1,$2)',[id,JSON.stringify({display_name:'Member '+id.slice(-1)})]);
+ await db.query('insert into public.community_moderators values ($1)',[mod]);
+ await db.query("insert into public.member_badges(user_id,badge_id) values ($1,'L0')",[a]);
+ async function as(id,role='authenticated'){await db.exec('reset role');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[id||'']);await db.exec('set role '+role);}
+ async function denied(sql,values=[]){await assert.rejects(()=>db.query(sql,values));}
+ await as(a);
+ assert.equal((await db.query('select * from member_profiles')).rows.length,1);
+ assert.equal((await db.query('select * from badge_catalog')).rows.length,31);
+ await denied('update member_profiles set points=1000');
+ await denied("insert into member_badges(user_id,badge_id) values ($1,'L5')",[a]);
+ await denied('insert into community_moderators values ($1)',[a]);
+ await denied("insert into community_posts(author_id,title,body,category,status) values ($1,'Title','Enough body text','help','published')",[a]);
+ const postA=(await db.query("select submit_community_post('First post','A useful community post','help') as id")).rows[0].id;
+ await denied("select submit_community_post('Next post','Another useful post','help')");
+ assert.equal((await db.query('select * from community_posts')).rows[0].status,'pending');
+ assert.equal((await db.query('select * from community_feed()')).rows.length,0);
+ await as(b);
+ assert.equal((await db.query('select * from community_posts')).rows.length,0);
+ assert.equal((await db.query('select * from member_badges')).rows.length,0);
+ await denied("select review_community_post($1,'published','')",[postA]);
+ const postB=(await db.query("select submit_community_post('Second post','Another community post','campus') as id")).rows[0].id;
+ await as(mod);
+ assert.equal((await db.query('select * from community_posts')).rows.length,2);
+ await db.query("select review_community_post($1,'published','Approved')",[postA]);
+ await denied("select review_community_post($1,'published','')",[postA]);
+ await denied("select review_community_post($1,'rejected','')",[postB]);
+ await db.query("select review_community_post($1,'rejected','Please add evidence')",[postB]);
+ const own=(await db.query("select submit_community_post('Reviewer post','A reviewer can also post','help') as id")).rows[0].id;
+ await denied("select review_community_post($1,'published','')",[own]);
+ await as(b);
+ const feed=(await db.query('select * from community_feed()')).rows;
+ assert.equal(feed.length,1);assert.equal(feed[0].id,postA);assert.equal(feed[0].author_name,'Member 1');assert.equal(feed[0].badges[0].name,'好奇猫');
+ assert.equal('author_id' in feed[0],false);assert.equal('review_note' in feed[0],false);assert.equal('email' in feed[0],false);
+ assert.equal((await db.query('select * from community_posts')).rows[0].review_note,'Please add evidence');
+ await as(null,'anon');await denied('select * from community_feed()');await denied('select * from member_profiles');
+ await db.close();console.log('PASS: SQL migrations, profile isolation, badge/role/points write denial, pending privacy, submission throttling, reviewer permissions, no self-review, approved-only feed and author badges.');
+})().catch(e=>{console.error(e);process.exit(1)});

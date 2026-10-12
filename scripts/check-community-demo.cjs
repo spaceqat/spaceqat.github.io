@@ -12,7 +12,7 @@ const assert = require('node:assert/strict');
   assert.match(homepageResponse.headers()['cache-control'] || '', /no-store/, 'Preview must not cache old navigation');
   for(const source of ['community-demo.html','events.html','contact.html','en.html']){
     await page.goto('http://127.0.0.1:8765/'+source);
-    await page.locator('a[href^="index.html?v=membership-4"]').first().click();
+    await page.locator('a[href^="index.html?v=community-2"]').first().click();
     await page.locator('.nav-cta').waitFor({state:'visible'});
     assert.match(await page.locator('.nav-cta').innerText(), /注册\s*\/\s*登录/, source+' return navigation');
     assert.equal(await page.locator('.nav-cta').getAttribute('href'),'account.html#signup');
