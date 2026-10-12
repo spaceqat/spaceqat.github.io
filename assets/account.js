@@ -14,12 +14,12 @@
   document.querySelector('#home').href=en?'en.html?v=community-2':'index.html?v=community-2';
   document.querySelector('#language').textContent=en?'中文':'EN';
   document.querySelector('#language').href=en?'account.html':'account.html?lang=en';
-  document.querySelector('#privacy').textContent=t('邮箱用于验证身份和账号恢复，不在个人资料中公开。账号由 Supabase 提供认证服务。','Your email is used for verification and account recovery, not displayed in your profile. Authentication is provided by Supabase.');
+  document.querySelector('#privacy').textContent=t('邮箱用于验证身份和账号恢复，不在个人资料中公开。','Your email is used for verification and account recovery, not displayed in your profile.');
   if (!window.supabase) { content.textContent=t('账号服务未能加载，请检查网络后刷新。','Unable to load authentication. Check your connection and reload.');return; }
   const client=window.spaceqatClient;
   const tabs=document.createElement('nav');tabs.className='member-tabs';tabs.hidden=true;tabs.setAttribute('aria-label',t('个人空间导航','Personal space navigation'));
-  tabs.innerHTML=[['profile',t('个人资料','Profile')],['badges',t('我的徽章','My badges')],['forum',t('社区论坛','Forum')],['submissions',t('我的投稿','My posts')]].map(([id,label])=>`<a href="#${id}">${label}</a>`).join('');
-  content.before(tabs);
+  tabs.innerHTML=`<p class="sidebar-label">YOUR OPEN SPACE</p>`+[['profile',t('我的空间','My space')],['badges',t('徽章收藏','Badges')],['forum',t('社区论坛','Forum')],['submissions',t('我的投稿','My posts')]].map(([id,label],i)=>`<a href="#${id}"><span>${['◇','♧','☷','↗'][i]} ${label}</span><small>0${i+1}</small></a>`).join('')+`<div class="sidebar-note"><span>✦</span><p>${t('每一份贡献，<br>都值得被看见。','Every contribution<br>deserves to be seen.')}</p><small>${t('开放每一面，<br>叠加无限可能。','Open every side.<br>Explore every possibility.')}</small></div>`;
+  document.querySelector('main').before(tabs);
   const recoveryAtStart=new URLSearchParams(location.hash.slice(1)).get('type')==='recovery';
   const callbackError=new URLSearchParams(location.hash.slice(1)).get('error_description');
   let recovery=recoveryAtStart, user=null, revision=0, authBusy=false;
@@ -33,6 +33,7 @@
     say('');
     tabs.hidden=!(user&&!recovery);
     document.querySelector('main').classList.toggle('member-space',!!user&&!recovery);
+    document.body.classList.toggle('signed-in',!!user&&!recovery);
     const view=location.hash.slice(1);
     const activeView=['badges','forum','submissions','moderation'].includes(view)?view:'profile';
     for(const a of tabs.querySelectorAll('a'))a.setAttribute('aria-current',a.hash==='#'+activeView?'page':'false');
@@ -54,6 +55,7 @@
       content.innerHTML=`<h2>${t('我的会员资料','My profile')}</h2><p class="email">${escape(user.email)}</p><form id="profile">${field('display_name',t('用户名','Display name'),'text',`maxlength="40" value="${escape(data.display_name)}"`)}<label>${t('个人介绍','Bio')}<textarea name="bio" maxlength="500">${escape(data.bio)}</textarea></label><button>${t('保存资料','Save profile')}</button></form><div class="stats">${t('贡献积分','Contribution points')}: ${Number(data.points)||0}<div class="links"><a href="#badges">${t('查看我的徽章 ↗','View my badges ↗')}</a><a href="#forum">${t('进入社区论坛 ↗','Explore the forum ↗')}</a></div></div><button class="secondary" id="logout">${t('退出登录','Sign out')}</button>`;
       document.querySelector('#logout').onclick=logout;
       document.querySelector('#profile').onsubmit=e=>run(e,async f=>{const name=f.get('display_name').trim();if(!name)throw new Error('name');const {error}=await client.from('member_profiles').update({display_name:name,bio:f.get('bio').trim()}).eq('id',user.id);if(error)throw error;say(t('资料已保存。','Profile saved.'));});
+      await window.decorateSpaceQatProfile({client,user,data,content,t,escape,current:()=>ticket===revision});
       return;
     }
     const mode=recovery&&user?'password':(['signup','forgot','resend'].includes(location.hash.slice(1))?location.hash.slice(1):'login');

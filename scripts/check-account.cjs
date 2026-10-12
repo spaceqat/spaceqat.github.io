@@ -22,14 +22,14 @@ const assert=require('node:assert/strict');
  signInWithPassword:async args=>{calls.push(['login',args]);current={user:member};return {data:current,error:null}},
  resetPasswordForEmail:async()=>{calls.push(['reset']);return {error:null}},resend:async()=>{calls.push(['resend']);return {error:null}},
  updateUser:async()=>{calls.push(['password']);return {error:null}},signOut:async()=>{current=null;return {error:null}}
- },from:()=>({select:()=>({eq:()=>({single:async()=>location.search.includes('profile_missing=1')?{data:null,error:{code:'PGRST205'}}:{data:{display_name:'Test member',bio:'',points:0},error:null}})}),update:args=>({eq:async()=>{calls.push(['profile',args]);return {error:null}}})})})};` }));
+ },from:table=>table!=='member_profiles'?({select:()=>({order:async()=>({data:[],error:null}),eq:async()=>({data:[],error:null})})}):({select:()=>({eq:()=>({single:async()=>location.search.includes('profile_missing=1')?{data:null,error:{code:'PGRST205'}}:{data:{display_name:'Test member',bio:'',points:0},error:null}})}),update:args=>({eq:async()=>{calls.push(['profile',args]);return {error:null}}})})})};` }));
  await page.goto('http://127.0.0.1:8765/account.html#signup');
  await page.reload();
  await page.locator('[name=name]').fill('测试会员');await page.locator('[name=email]').fill('test@example.invalid');await page.locator('[name=password]').fill('Test-password-123');await page.locator('#auth button').click();
  await page.getByText('请求已提交。',{exact:false}).waitFor();
  assert.equal(await page.evaluate(()=>calls[0][1].options.data.display_name),'测试会员');
  await page.locator('a[href="#login"]').click();await page.getByRole('heading',{name:'欢迎回来'}).waitFor();await page.locator('[name=email]').fill('test@example.invalid');await page.locator('[name=password]').fill('Test-password-123');await page.locator('#auth button').click();
- await page.locator('#profile').waitFor();await page.locator('[name=display_name]').fill('新名字');await page.locator('#profile button').click();await page.getByText('资料已保存。',{exact:true}).waitFor();
+ await page.locator('.profile-hero').waitFor();await page.locator('#edit-profile').click();await page.locator('#profile').waitFor();await page.locator('[name=display_name]').fill('新名字');await page.locator('#profile button').click();await page.getByText('资料已保存。',{exact:true}).waitFor();
  assert.deepEqual(await page.evaluate(()=>Object.keys(calls.find(c=>c[0]==='profile')[1]).sort()),['bio','display_name']);
  await page.locator('#logout').click();await page.locator('#auth').waitFor();
  for(const [route,title] of [['forgot','找回密码'],['resend','重发验证邮件']]){
