@@ -1,7 +1,7 @@
 /* Real member data only. All writes are checked by Supabase RPC permissions. */
 window.renderSpaceQatCommunity=async ({client,user,view,content,t,escape,say,current})=>{
   const headings={badges:t('我的徽章','My badges'),forum:t('社区论坛','Community forum'),submissions:t('我的投稿','My posts'),moderation:t('投稿审核','Review submissions')};
-  const categories={help:t('提问与互助','Questions & help'),fatqat:t('FatQat 开源','FatQat open source'),campus:t('校园交流','Campus'),knowledge:t('知识与作品','Knowledge & projects'),community:t('社区交流','Community')};
+  const categories={help:t('提问与互助','Questions & help'),fatqat:t('FatQat 开源','FatQat open source'),campus:t('校园交流','Campus'),knowledge:t('知识与作品','Knowledge & projects'),community:t('社区公告','Announcements')};
   const status=s=>({pending:t('待审核','Pending review'),published:t('已发布','Published'),rejected:t('未通过','Not approved')})[s]||s;
   const date=value=>new Date(value).toLocaleDateString(document.documentElement.lang);
   const failure=()=>{content.innerHTML=`<h2>${headings[view]}</h2><p class="empty">${t('这个板块暂时无法加载，请稍后重试。','This section is currently unavailable. Please try again later.')}</p><button id="retry-community">${t('重新加载','Retry')}</button>`;content.querySelector('button').onclick=()=>window.renderSpaceQatCommunity({client,user,view,content,t,escape,say,current});};
@@ -20,12 +20,20 @@ window.renderSpaceQatCommunity=async ({client,user,view,content,t,escape,say,cur
     if(view==='forum'){
       const [feed,role]=await Promise.all([client.rpc('community_feed',{page_offset:0}),client.rpc('community_can_review')]);
       if(!current())return;if(feed.error){failure();return;}
-      content.innerHTML=`<div class="section-heading"><h2>${headings.forum}</h2>${role.data===true?`<a href="#moderation">${t('审核投稿 ↗','Review submissions ↗')}</a>`:''}</div><details class="post-compose"><summary>${t('＋ 发布帖子','＋ Write a post')}</summary><p>${t('投稿通过审核后公开展示你的用户名与已获得的徽章。','After review, your post will display your username and earned badges.')}</p><form id="post-form"><label>${t('标题','Title')}<input name="title" minlength="3" maxlength="160" required></label><label>${t('分类','Category')}<select name="category">${Object.entries(categories).map(([id,name])=>`<option value="${id}">${name}</option>`).join('')}</select></label><label>${t('正文','Body')}<textarea name="body" minlength="10" maxlength="20000" required></textarea></label><button>${t('提交审核','Submit for review')}</button></form></details><div id="feed">${feed.data.map(post).join('')||`<p class="empty">${t('还没有已发布的帖子。欢迎提交第一篇分享。','No published posts yet. Be the first to submit a post.')}</p>`}</div><button id="more-posts" class="secondary" ${feed.data.length<20?'hidden':''}>${t('加载更多','Load more')}</button>`;
+      content.innerHTML=`<div class="section-heading"><h2>${headings.forum}</h2>${role.data===true?`<a href="#moderation">${t('审核投稿 ↗','Review submissions ↗')}</a>`:''}</div><details class="post-compose"><summary>${t('＋ 发布帖子','＋ Write a post')}</summary><p>${t('提问与互助、FatQat 开源、校园交流可直接发布；知识与作品、社区公告审核通过后发布。帖子会展示你的用户名与已获得的徽章。','Questions & help, FatQat open source and Campus publish immediately. Knowledge & projects and Announcements require review. Posts display your username and earned badges.')}</p><form id="post-form"><label>${t('标题','Title')}<input name="title" minlength="3" maxlength="160" required></label><label>${t('分类','Category')}<select name="category">${Object.entries(categories).map(([id,name])=>`<option value="${id}">${name}</option>`).join('')}</select></label><label>${t('正文','Body')}<textarea name="body" minlength="10" maxlength="20000" required></textarea></label><p id="publication-hint" class="helper" aria-live="polite"></p><button>${t('直接发布','Publish now')}</button></form></details><div id="feed">${feed.data.map(post).join('')||`<p class="empty">${t('还没有已发布的帖子。欢迎提交第一篇分享。','No published posts yet. Be the first to submit a post.')}</p>`}</div><button id="more-posts" class="secondary" ${feed.data.length<20?'hidden':''}>${t('加载更多','Load more')}</button>`;
+      const compose=content.querySelector('#post-form');
+      const updatePolicy=()=>{const review=['knowledge','community'].includes(compose.elements.category.value);compose.querySelector('button').textContent=review?t('提交审核','Submit for review'):t('直接发布','Publish now');content.querySelector('#publication-hint').textContent=review?t('此板块的帖子审核通过后公开。','Posts in this category are published after review.'):t('此板块的帖子提交后直接公开。','Posts in this category are published immediately.');};
+      compose.elements.category.onchange=updatePolicy;updatePolicy();
       let offset=20;
       document.querySelector('#more-posts').onclick=e=>act(e.currentTarget,async()=>{const {data,error}=await client.rpc('community_feed',{page_offset:offset});if(error)throw error;if(!current())return;offset+=data.length;document.querySelector('#feed').insertAdjacentHTML('beforeend',data.map(post).join(''));e.target.hidden=data.length<20;});
       document.querySelector('#post-form').onsubmit=e=>{e.preventDefault();const form=e.currentTarget;const f=new FormData(form);act(form.querySelector('button'),async()=>{
-        const {error}=await client.rpc('submit_community_post',{post_title:f.get('title').trim(),post_body:f.get('body').trim(),post_category:f.get('category')});if(error)throw error;
-        if(!current())return;form.reset();say(t('投稿已提交，审核通过后会显示在论坛。可在“我的投稿”查看状态。','Submitted for review. Track its status in My posts.'));
+        const {data:postId,error}=await client.rpc('submit_community_post',{post_title:f.get('title').trim(),post_body:f.get('body').trim(),post_category:f.get('category')});if(error)throw error;
+        if(!current())return;
+        const saved=await client.from('community_posts').select('status').eq('id',postId).single();
+        if(!current())return;
+        if(saved.error||!saved.data){say(t('帖子已提交，可在“我的投稿”查看发布状态。','Post submitted. Check My posts for its publication status.'));return;}
+        if(saved.data.status==='published'){await window.renderSpaceQatCommunity({client,user,view,content,t,escape,say,current});if(current())say(t('帖子已发布，现在可以在社区论坛查看。','Your post is published and visible in the forum.'));}
+        else {form.reset();updatePolicy();say(t('投稿已提交，审核通过后会显示在论坛。可在“我的投稿”查看状态。','Submitted for review. Track its status in My posts.'));}
       });};
       return;
     }

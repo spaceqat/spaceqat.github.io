@@ -13,8 +13,8 @@ const assert=require('node:assert/strict');
  function query(table){let rows=tables[table]||[];const builder={select:()=>builder,eq:(k,v)=>{rows=rows.filter(row=>row[k]===v);return builder},order:()=>builder,limit:()=>builder,single:async()=>({data:rows[0],error:null}),then:(ok,bad)=>Promise.resolve({data:rows,error:null}).then(ok,bad),update:data=>({eq:async()=>{Object.assign(rows[0],data);return {error:null}}})};return builder;}
  window.supabase={createClient:()=>({auth:{getSession:async()=>({data:{session:session()}}),onAuthStateChange:fn=>{callbacks.push(fn);return{}},signInWithPassword:async()=>{localStorage.setItem('test-member-session','yes');notify('SIGNED_IN');return {data:session(),error:null}},signOut:async()=>{localStorage.removeItem('test-member-session');notify('SIGNED_OUT');return {error:null}}},from:query,rpc:async(name,args)=>{
  if(name==='community_can_review')return {data:false,error:null};
- if(name==='community_feed')return {data:[{id:'public-post',title:'第一篇量子分享',body:'<img src=x onerror=alert(1)> 这里是经过审核的内容。',category:'help',published_at:'2026-10-12T00:00:00Z',author_name:'社区成员',badges:[{name:'好奇猫'}]}],error:null};
- if(name==='submit_community_post'){tables.community_posts.push({id:'pending-post',author_id:member.id,title:args.post_title,body:args.post_body,category:args.post_category,status:'pending',created_at:'2026-10-12T00:00:00Z',review_note:''});return {data:'pending-post',error:null};}
+ if(name==='community_feed')return {data:[{id:'public-post',title:'第一篇量子分享',body:'<img src=x onerror=alert(1)> 这里是经过审核的内容。',category:'help',published_at:'2026-10-12T00:00:00Z',author_name:'社区成员',badges:[{name:'好奇猫'}]},...tables.community_posts.filter(p=>p.status==='published')],error:null};
+ if(name==='submit_community_post'){const id='post-'+tables.community_posts.length;tables.community_posts.push({id,author_id:member.id,title:args.post_title,body:args.post_body,category:args.post_category,status:['knowledge','community'].includes(args.post_category)?'pending':'published',created_at:'2026-10-12T00:00:00Z',published_at:'2026-10-12T00:00:00Z',review_note:''});return {data:id,error:null};}
  return {data:null,error:{message:'unexpected RPC'}};
  }})};` }));
  const page=await context.newPage();const faults=[];page.on('pageerror',e=>faults.push(e.message));
@@ -30,9 +30,15 @@ const assert=require('node:assert/strict');
  await page.screenshot({path:'C:/Users/Administrator/AppData/Local/Temp/spaceqat-real-badges.png',fullPage:true});
  await page.locator('.member-tabs a[href="#forum"]').click();await page.getByRole('heading',{name:'第一篇量子分享'}).waitFor();
  assert.equal(await page.locator('.post-body img').count(),0);await page.getByText('社区成员',{exact:false}).waitFor();await page.getByText('好奇猫',{exact:true}).waitFor();
- await page.locator('summary').click();await page.locator('[name=title]').fill('我的真实投稿测试');await page.locator('[name=body]').fill('这是一篇需要社区审核后才能公开展示的测试稿件。');await page.locator('#post-form button').click();await page.getByText('投稿已提交，审核通过后会显示在论坛。可在“我的投稿”查看状态。').waitFor();
+ await page.locator('summary').click();await page.locator('[name=category]').selectOption('knowledge');await page.locator('[name=title]').fill('我的真实投稿测试');await page.locator('[name=body]').fill('这是一篇需要社区审核后才能公开展示的测试稿件。');await page.locator('#post-form button').click();await page.getByText('投稿已提交，审核通过后会显示在论坛。可在“我的投稿”查看状态。').waitFor();
  assert.equal(await page.locator('#feed').getByText('我的真实投稿测试',{exact:true}).count(),0);
  await page.locator('.member-tabs a[href="#submissions"]').click();await page.getByRole('heading',{name:'我的真实投稿测试'}).waitFor();await page.getByText('待审核',{exact:false}).waitFor();
+ for(const category of ['help','fatqat','campus','community']){
+  await page.locator('.member-tabs a[href="#forum"]').click();await page.locator('summary').click();await page.locator('[name=category]').selectOption(category);await page.locator('[name=title]').fill('分类测试 '+category);await page.locator('[name=body]').fill('检查分类发布策略和真实返回状态。');
+  assert.equal(await page.locator('#post-form button').textContent(),category==='community'?'提交审核':'直接发布');await page.locator('#post-form button').click();
+  if(category==='community'){await page.getByText('投稿已提交，审核通过后会显示在论坛。可在“我的投稿”查看状态。').waitFor();assert.equal(await page.locator('#feed').getByText('分类测试 '+category,{exact:true}).count(),0);}
+  else {await page.getByText('帖子已发布，现在可以在社区论坛查看。').waitFor();await page.getByRole('heading',{name:'分类测试 '+category,exact:true}).waitFor();}
+ }
  await page.goto('http://127.0.0.1:8765/account.html#moderation');await page.getByText('此页面仅向社区审核员开放。').waitFor();
  await page.goto('http://127.0.0.1:8765/en.html');await page.locator('.nav-cta').filter({hasText:'My space'}).waitFor();
  await page.setViewportSize({width:390,height:950});await page.locator('.member-mobile-entry').filter({hasText:'My space'}).waitFor({state:'visible'});

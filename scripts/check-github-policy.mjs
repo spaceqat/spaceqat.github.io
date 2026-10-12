@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {verifySignature,eligiblePull,trustedPermission,ingestArgs} from '../supabase/functions/github-contributions/policy.mjs';
+const raw=new TextEncoder().encode('{"action":"closed"}');
+const key=await crypto.subtle.importKey('raw',new TextEncoder().encode('test-secret'),{name:'HMAC',hash:'SHA-256'},false,['sign']);
+const sig='sha256='+Buffer.from(await crypto.subtle.sign('HMAC',key,raw)).toString('hex');
+assert(await verifySignature(raw,sig,'test-secret'));
+assert.equal(await verifySignature(raw,sig,'wrong-secret'),false);
+assert.equal(await verifySignature(new TextEncoder().encode('{}'),sig,'test-secret'),false);
+assert.equal(await verifySignature(raw,'bad','test-secret'),false);
+const pr={number:42,merged:true,merged_at:'2026-10-01T00:00:00Z',user:{id:123,login:'author',type:'User'},title:'Merged work',base:{repo:{full_name:'spaceqat/fatqat'}},labels:[{name:'spaceqat:t01'}]};
+assert(eligiblePull(pr));assert.equal(eligiblePull({...pr,merged:false}),false);assert.equal(eligiblePull({...pr,user:{...pr.user,type:'Bot'}}),false);assert.equal(eligiblePull({...pr,base:{repo:{full_name:'other/repo'}}}),false);
+assert.equal(trustedPermission({permission:'read'}),false);assert.equal(trustedPermission({permission:'write'}),true);
+assert.equal(ingestArgs(pr,456).trusted_maintainer,false);assert.equal(ingestArgs(pr,456,true,789).maintainer_github_id,'789');
+console.log('PASS: webhook HMAC verification, payload tampering, canonical repository, merged-only PRs, bot exclusion and explicit maintainer trust.');

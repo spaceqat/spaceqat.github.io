@@ -41,6 +41,7 @@ const assert = require('node:assert/strict');
   await page.getByRole('heading',{name:'你好，测试共建者。'}).waitFor();
   await go('forum');
   await page.getByRole('button',{name:'＋ 发布帖子',exact:true}).click();
+  await page.locator('#compose-form select[name=category]').selectOption({label:'知识与作品'});
   await page.getByLabel('标题',{exact:true}).fill('审核流程测试');
   await page.getByLabel('正文',{exact:true}).fill('初稿内容 <img src=x onerror=alert(1)>');
   await page.getByRole('button',{name:'提交审核 →',exact:true}).click();
@@ -82,6 +83,7 @@ const assert = require('node:assert/strict');
   await go('forum');
   await page.getByRole('button',{name:'审核流程测试',exact:true}).click();
   await page.getByText('这是一条需要审核的回复',{exact:true}).waitFor();
+  for(const category of ['提问与互助','FatQat 开源','校园交流']){await go('forum');await page.getByRole('button',{name:'＋ 发布帖子',exact:true}).click();await page.locator('#compose-form select[name=category]').selectOption({label:category});await page.getByLabel('标题',{exact:true}).fill('直接发布测试 '+category);await page.getByLabel('正文',{exact:true}).fill('无需审核的公开讨论内容');await page.getByRole('button',{name:'直接发布 →',exact:true}).click();await page.getByRole('button',{name:'直接发布测试 '+category,exact:true}).waitFor();}
   await go('profile');
   await page.getByRole('button',{name:'编辑资料',exact:true}).click();
   await page.getByLabel('公开个人主页',{exact:true}).uncheck();

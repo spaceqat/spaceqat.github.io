@@ -20,6 +20,20 @@
   const tabs=document.createElement('nav');tabs.className='member-tabs';tabs.hidden=true;tabs.setAttribute('aria-label',t('个人空间导航','Personal space navigation'));
   tabs.innerHTML=`<p class="sidebar-label">YOUR OPEN SPACE</p>`+[['profile',t('我的空间','My space')],['badges',t('徽章收藏','Badges')],['forum',t('社区论坛','Forum')],['submissions',t('我的投稿','My posts')]].map(([id,label],i)=>`<a href="#${id}"><span>${['◇','♧','☷','↗'][i]} ${label}</span><small>0${i+1}</small></a>`).join('')+`<div class="sidebar-note"><span>✦</span><p>${t('每一份贡献，<br>都值得被看见。','Every contribution<br>deserves to be seen.')}</p><small>${t('开放每一面，<br>叠加无限可能。','Open every side.<br>Explore every possibility.')}</small></div>`;
   document.querySelector('main').before(tabs);
+  const contributionLink=document.createElement('a');contributionLink.href='#contributions';contributionLink.innerHTML=`<span>⌘ ${t('开源贡献','Contributions')}</span><small>05</small>`;tabs.querySelector('.sidebar-note').before(contributionLink);
+  async function refreshStaffNavigation(ticket){
+    for(const a of tabs.querySelectorAll('[data-staff]'))a.remove();
+    if(!user||recovery)return;
+    try{
+      const permissions=await client.rpc('my_community_permissions');
+      let p=permissions.data;
+      if(permissions.error){const legacy=await client.rpc('community_can_review');p={forum:legacy.data===true};}
+      if(ticket!==revision)return;
+      for(const [flag,hash,label] of [['forum','moderation',t('论坛审核台','Forum review')],['contributions','contribution-review',t('贡献审核台','Contribution review')],['admin','admin',t('社区管理台','Administration')]]){
+        if(!p?.[flag])continue;const a=document.createElement('a');a.dataset.staff=flag;a.href='#'+hash;a.textContent='▦ '+label;a.setAttribute('aria-current',location.hash===a.hash?'page':'false');tabs.querySelector('.sidebar-note').before(a);
+      }
+    }catch{/* Missing optional permissions never prevent sign-in. */}
+  }
   const recoveryAtStart=new URLSearchParams(location.hash.slice(1)).get('type')==='recovery';
   const callbackError=new URLSearchParams(location.hash.slice(1)).get('error_description');
   let recovery=recoveryAtStart, user=null, revision=0, authBusy=false;
@@ -34,9 +48,13 @@
     tabs.hidden=!(user&&!recovery);
     document.querySelector('main').classList.toggle('member-space',!!user&&!recovery);
     document.body.classList.toggle('signed-in',!!user&&!recovery);
+    void refreshStaffNavigation(ticket);
     const view=location.hash.slice(1);
-    const activeView=['badges','forum','submissions','moderation'].includes(view)?view:'profile';
+    const activeView=['badges','forum','submissions','moderation','contributions','contribution-review','admin'].includes(view)?view:'profile';
     for(const a of tabs.querySelectorAll('a'))a.setAttribute('aria-current',a.hash==='#'+activeView?'page':'false');
+    if(user&&!recovery&&['contributions','contribution-review','admin'].includes(view)){
+      await window.renderSpaceQatContributions({client,user,view,content,t,escape,say,current:()=>ticket===revision});return;
+    }
     if(user&&!recovery&&['badges','forum','submissions','moderation'].includes(view)){
       await window.renderSpaceQatCommunity({client,user,view,content,t,escape,say,current:()=>ticket===revision});
       return;
@@ -84,5 +102,5 @@
   async function logout(){authBusy=true;try{const {error}=await client.auth.signOut();if(error){say(errors(error),true);return;}user=null;recovery=false;await render();}catch(e){say(errors(e),true);}finally{authBusy=false;}}
   client.auth.onAuthStateChange((event,session)=>{const previous=user?.id;user=session?.user||null;if(event==='PASSWORD_RECOVERY')recovery=true;if(event==='SIGNED_OUT')recovery=false;if(!authBusy&&(previous!==user?.id||event==='PASSWORD_RECOVERY')&&['SIGNED_OUT','SIGNED_IN','PASSWORD_RECOVERY'].includes(event))setTimeout(()=>render(),0);});
   window.addEventListener('hashchange',()=>{if(!location.hash.includes('access_token'))render();});
-  (async()=>{try{const {data,error}=await client.auth.getSession();if(error)throw error;user=data.session?.user||null;if(location.hash.includes('access_token')||callbackError)history.replaceState(null,'',callback.href);await render();if(callbackError)say(t('邮件链接已失效或无法验证，请重新申请邮件。','This email link is invalid or expired. Please request a new one.'),true);}catch(e){content.textContent=t('账号服务暂时不可用，请刷新重试。','Authentication is temporarily unavailable. Please reload.');}})();
+  (async()=>{try{const {data,error}=await client.auth.getSession();if(error)throw error;user=data.session?.user||null;if(location.hash.includes('access_token')||callbackError)history.replaceState(null,'',callback.href);const linking=sessionStorage.getItem('spaceqat-github-link-user');if(linking){sessionStorage.removeItem('spaceqat-github-link-user');if(!callbackError&&linking===user?.id)history.replaceState(null,'',callback.href+'#contributions');}await render();if(callbackError)say(t('验证链接未能完成，请重新尝试邮件验证或 GitHub 授权。','Verification could not be completed. Please retry email verification or GitHub authorization.'),true);}catch(e){content.textContent=t('账号服务暂时不可用，请刷新重试。','Authentication is temporarily unavailable. Please reload.');}})();
 })();

@@ -1,0 +1,5 @@
+project_id = "spaceqat-community"
+
+[functions.github-contributions]
+verify_jwt = false
+# The handler verifies GitHub signatures, administrator JWTs or the cron secret.

@@ -46,5 +46,22 @@ const assert=require('node:assert/strict');
  assert.equal('author_id' in feed[0],false);assert.equal('review_note' in feed[0],false);assert.equal('email' in feed[0],false);
  assert.equal((await db.query('select * from community_posts')).rows[0].review_note,'Please add evidence');
  await as(null,'anon');await denied('select * from community_feed()');await denied('select * from member_profiles');
- await db.close();console.log('PASS: SQL migrations, profile isolation, badge/role/points write denial, pending privacy, submission throttling, reviewer permissions, no self-review, approved-only feed and author badges.');
+ await db.exec('reset role');
+ await db.exec(fs.readFileSync('supabase/003_category_publication.sql','utf8'));
+ await db.exec(fs.readFileSync('supabase/003_category_publication.sql','utf8'));
+ assert.equal((await db.query('select status from community_posts where id=$1',[own])).rows[0].status,'pending');
+ for(const category of ['help','fatqat','campus','knowledge','community']){
+   await db.exec('reset role');await db.query("update community_posts set created_at=now()-interval '2 hours' where author_id=$1",[a]);
+   await as(a);
+   const id=(await db.query('select submit_community_post($1,$2,$3) as id',['Category '+category,'A valid post in this category',category])).rows[0].id;
+   const row=(await db.query('select * from community_posts where id=$1',[id])).rows[0];
+   const review=['knowledge','community'].includes(category);
+   assert.equal(row.status,review?'pending':'published');assert.equal(row.published_at!==null,!review);assert.equal(row.reviewed_by,null);
+   await denied("select submit_community_post('Too soon','Another post body','help')");
+   await denied("update community_posts set status='published' where id=$1",[id]);
+   await as(b);assert.equal((await db.query('select * from community_feed()')).rows.some(p=>p.id===id),!review);
+ }
+ await as(a);await denied("select submit_community_post('Invalid category','A valid body for this test','unknown')");
+ await as(null,'anon');await denied("select submit_community_post('Anonymous post','A valid body for this test','help')");
+ await db.close();console.log('PASS: SQL permissions, category-based publication for all five categories, pending privacy, preserved historical status, idempotent migration, throttling and review access.');
 })().catch(e=>{console.error(e);process.exit(1)});

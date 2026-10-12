@@ -1,0 +1,118 @@
+SpaceQat 管理权限与 GitHub 贡献接入
+
+当前交付的是可部署代码和迁移脚本。执行下列配置后才会在真实项目中生效。
+首位管理员使用用户明确指定的注册邮箱。不要把密码、私钥或服务端密钥发到聊天里。
+
+1. 数据库与首位管理员
+在 Supabase SQL Editor 按顺序执行尚未执行的脚本：
+  003_category_publication.sql（按板块决定发帖审核）
+  004_github_contributions.sql（执行一次：角色、贡献、积分账本、授权函数）
+  005_bootstrap_admin.sql（先替换 ADMIN_EMAIL_HERE；指定账号需先注册；可重复执行）
+本机已准备填好邮箱的 bootstrap-admin.local.sql，可直接使用；它被 Git 忽略，不随网站发布。
+已有 001、002 不要重新执行。004 不包含任何自动授权的默认邮箱。
+005 只为用户明确指定的现有账号授予管理员权限，不会创建新账号。
+
+该账号登录后刷新，侧栏会出现“论坛审核台”“贡献审核台”“社区管理台”。
+管理台支持：按完整注册邮箱查询会员；分配/撤销管理员、论坛审核员、贡献审核员；
+授予/撤销徽章；维护标签计分规则；发起一批 GitHub 历史贡献同步；查看管理记录。
+至少保留一位管理员。论坛审核员不能授予角色或审核积分。
+贡献审核员不能改角色、徽章和计分规则，也不能核验自己的贡献。
+
+2. GitHub 身份绑定：使用 GitHub OAuth App
+在 GitHub Developer settings -> OAuth Apps 创建 OAuth App：
+  Homepage URL: https://space-qat.com
+  Authorization callback URL:
+  https://hvwsqebpeabfnndoxmwh.supabase.co/auth/v1/callback
+把 Client ID 和 Client Secret 填入 Supabase Authentication 的 GitHub provider，启用。
+在 Supabase Auth 配置中开启 Manual identity linking。
+Auth Redirect URLs 加入：
+  https://space-qat.com/account.html
+  https://space-qat.com/account.html?lang=en
+  http://127.0.0.1:8765/account.html
+  http://127.0.0.1:8765/account.html?lang=en
+前端在已登录的会员会话里调用 linkIdentity，不会另建一个示例档案。
+进入“开源贡献”，点击绑定 GitHub，授权返回后再进入“开源贡献”即可登记关联。
+关联依据是 Supabase auth.identities 中的 GitHub 数字 ID，不信任手填用户名。
+一个 GitHub ID 只能归属一个会员。换绑或合并账号需人工核验，当前无自助换绑。
+
+3. 仓库事件：创建 GitHub App（与上一步 OAuth App 分开）
+在 spaceqat 组织下创建 GitHub App，安装范围仅选 spaceqat/fatqat。
+Repository permissions:
+  Pull requests: Read-only
+  Metadata: Read-only
+Subscribe to events: Pull request
+Webhook URL:
+  https://hvwsqebpeabfnndoxmwh.supabase.co/functions/v1/github-contributions/webhook
+设置独立随机 Webhook secret；记录 App ID、Installation ID；生成 App private key。
+只读取 PR，不请求仓库写入权限。
+
+4. 部署 Supabase Edge Function
+在 Supabase Edge Functions Secrets 中设置：
+  GITHUB_APP_ID                 GitHub App ID
+  GITHUB_INSTALLATION_ID        安装到 spaceqat/fatqat 的 installation ID
+  GITHUB_APP_PRIVATE_KEY        PKCS8 PEM 私钥（BEGIN PRIVATE KEY）
+  GITHUB_WEBHOOK_SECRET         与 GitHub App webhook secret 一致
+  GITHUB_SYNC_SECRET            独立随机长密钥，供计划任务调用
+  ALLOWED_ORIGINS               https://space-qat.com,http://127.0.0.1:8765
+SUPABASE_URL、SUPABASE_ANON_KEY、SUPABASE_SERVICE_ROLE_KEY 使用平台默认环境变量。
+密钥仅保留在服务端，不加入网页或提交到 Git。
+GitHub 下载的私钥如为 BEGIN RSA PRIVATE KEY，使用 OpenSSL 本地转换为 PKCS8：
+  openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in github-app.pem -out github-app-pkcs8.pem
+然后把完整 PKCS8 文件内容填入 GITHUB_APP_PRIVATE_KEY。
+
+安装 Supabase CLI，登录有权访问该项目的账号，在项目目录执行：
+  supabase login
+  supabase functions deploy github-contributions --project-ref hvwsqebpeabfnndoxmwh --no-verify-jwt
+函数配置中 verify_jwt=false 是为了允许 GitHub Webhook；函数内部会分别验证：
+GitHub HMAC 签名、管理员真实 JWT 和权限、或计划任务专用密钥。
+无签名/无授权调用不会同步或加分。此参数不是关闭应用内授权。
+函数依赖与锁文件在 supabase/functions/github-contributions 目录。
+
+5. 配置贡献规则
+管理员在管理台填写与 GitHub 完全相同的标签，例如 spaceqat:t01。
+路线、分值和说明必须依照已经批准的贡献手册填写；默认没有启用的计分规则。
+创建/编辑同名标签的规则会覆盖规则配置，不会修改已入账的历史分值。
+在 FatQat PR 上由具备 write/maintain/admin 权限的维护者设置对应标签。
+自动入账要求：PR 已合并、作者已绑定、匹配且仅匹配一条启用的计分规则、
+维护者本人不是 PR 作者、合并/计分标签事件经过签名验证与实时权限检查。
+前端积分在下次刷新个人空间时更新。
+
+不符合自动条件的已合并 PR 进入“贡献审核台”：核验成果、填写分值/路线/依据后认定。
+历史补查只能产生候选记录，不会因为历史标签直接批量加分。
+未绑定的作者记录允许查看和拒绝，但绑定会员后才能批准入账。
+相同仓库 ID + PR 编号只生成一条记录，多次 Webhook、重试或补查不会重复记分。
+已拒绝或已撤销记录不会被再次同步自动批准。
+错误积分由管理员在贡献审核台选择“已入账”，展开“撤销这笔积分”并说明原因。
+原记录和冲正记录都保留。此版本不提供删除账本或随意修改总积分的功能。
+拆分 PR 是否属于同一成果、共同作者分工、代表成果等仍需人工核验；
+只给确实适合自动认定的贡献类型启用标签规则。
+当前同步范围是已合并 PR 的作者。Issue、评审和共同作者分配尚未实现。
+等级、专长和成就徽章仍由核验后授予，不因为总分达到门槛自动升级。
+
+6. 历史补查与定时同步
+管理台“同步一批贡献”每次补查 20 个已关闭 PR，录入其中已合并且作者为真人的 PR。
+每次间隔至少 5 分钟，进度游标保存在数据库；失败可以重试。
+所有历史批次完成后，游标回到第一批，后续周期会重新核对，补偿漏掉的 Webhook。
+日常新贡献以 Webhook 为主。自动补查在 Supabase 运行，不依赖本地电脑。
+部署并测试成功后：在 Supabase 启用 pg_cron 和 pg_net；
+在 Supabase Vault 中创建 github_sync_secret，值与 GITHUB_SYNC_SECRET 完全相同。
+运行 006_schedule_github_sync.sql，创建每 15 分钟一次的补查任务。
+同名任务可重复配置，不会创建多份。停用：
+  select cron.unschedule('spaceqat-github-reconcile');
+
+7. 真实环境验收
+- 指定管理员能看到三个后台入口；普通会员无法直接访问后台或改角色/分值。
+- 用已有会员账号绑定 GitHub，确认邮箱会员 ID 不变，积分与徽章仍在原账号。
+- 用真实非生产测试 PR 或已有贡献核验流程验证 Webhook，勿为测试伪造有效贡献。
+- 在 GitHub 最近交付记录里检查返回 200，重发同一交付确认账本不会重复。
+- 无计分标签的合并 PR 进入待核验；符合启用规则且维护者确认的 PR 自动入账。
+- 人工批准一次、刷新个人空间看到分值；管理员撤销后分值正确回退。
+- 检查 Edge Function 日志和管理台“上次完成”，确认历史补查正常。
+
+实现依据：
+https://supabase.com/docs/guides/auth/auth-identity-linking
+https://supabase.com/docs/guides/auth/social-login/auth-github
+https://supabase.com/docs/guides/functions/auth
+https://supabase.com/docs/guides/functions/schedule-functions
+https://docs.github.com/en/webhooks/using-webhooks/validating-webhook-deliveries
+https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-json-web-token-jwt-for-a-github-app
