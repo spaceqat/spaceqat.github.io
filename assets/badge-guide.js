@@ -91,5 +91,17 @@
     try { id=location.hash.startsWith('#badges/') ? decodeURIComponent(location.hash.slice(8)) : ''; } catch { /* Ignore malformed deep links; keep the catalog usable. */ }
     if(id)open(id);
   }
-  window.spaceqatBadgeGuide = {guide,detail,rule,name,bind};
+  // Keep policy copy intact while collapsing secondary reading into a native accordion.
+  function compactGuide(demo=false){
+    const template=document.createElement('template');template.innerHTML=guide(demo);
+    const section=template.content.querySelector('.xp-guide');
+    const metrics=pick(['20–120 XP / 项','示例 20–80 XP','10 / 20 XP · 月限 80','示例 5–50 XP'],['20–120 XP / work','Examples: 20–80 XP','10 / 20 XP · 80 / month','Examples: 5–50 XP']);
+    section.querySelectorAll('.xp-routes>div').forEach((card,i)=>{const pill=document.createElement('span');pill.className='route-metric';pill.textContent=metrics[i];card.querySelector('h4').after(pill);});
+    const more=document.createElement('details');more.className='guide-more';
+    const summary=document.createElement('summary');summary.textContent=pick('核验流程、计分约束与成长权益','Verification, scoring limits & growth benefits');more.append(summary);
+    let node=section.querySelector('.xp-routes').nextElementSibling;
+    while(node){const next=node.nextElementSibling;more.append(node);node=next;}
+    section.append(more);return section.outerHTML;
+  }
+  window.spaceqatBadgeGuide = {guide:compactGuide,detail,rule,name,bind};
 })();

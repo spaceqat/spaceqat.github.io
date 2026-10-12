@@ -18,7 +18,7 @@ const assert = require('node:assert/strict');
     assert.equal(await page.locator('.nav-cta').getAttribute('href'),'account.html#signup');
   }
   const go=async hash=>{await page.goto(root+'#'+hash);};
-  const settle=async()=>{await page.evaluate(async()=>{await document.fonts.ready;await Promise.all(document.getAnimations().map(a=>a.finished.catch(()=>{})));document.querySelector('#toast').classList.remove('show');});};
+  const settle=async()=>{await page.evaluate(async()=>{await document.fonts.ready;await Promise.all(document.getAnimations().filter(a=>a.effect?.getComputedTiming().iterations!==Infinity).map(a=>a.finished.catch(()=>{})));document.querySelector('#toast').classList.remove('show');});};
   for(const homepage of ['index.html','en.html']){
     await page.goto('http://127.0.0.1:8765/'+homepage);
     assert.equal(await page.locator('.nav-cta').getAttribute('href'),homepage==='en.html'?'account.html?lang=en#signup':'account.html#signup');

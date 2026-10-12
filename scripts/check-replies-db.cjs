@@ -1,0 +1,42 @@
+const {PGlite}=require(process.env.PGLITE_MODULE||'@electric-sql/pglite');
+const fs=require('node:fs'),assert=require('node:assert/strict');
+(async()=>{
+ const db=new PGlite();
+ try{
+  await db.exec(`create role anon;create role authenticated;create schema auth;create table auth.users(id uuid primary key,raw_user_meta_data jsonb);create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;grant usage on schema public,auth to anon,authenticated;`);
+  for(const f of ['001_members.sql','002_community.sql','003_category_publication.sql','010_forum_replies.sql','010_forum_replies.sql'])await db.exec(fs.readFileSync('supabase/'+f,'utf8'));
+  const a='00000000-0000-0000-0000-000000000001',b='00000000-0000-0000-0000-000000000002',mod='00000000-0000-0000-0000-000000000003';
+  for(const id of [a,b,mod])await db.query('insert into auth.users values($1,$2)',[id,JSON.stringify({display_name:'Member '+id.slice(-1)})]);
+  await db.query('insert into community_moderators values($1)',[mod]);
+  await db.query("insert into member_badges(user_id,badge_id) values($1,'L0'),($2,'L2')",[a,b]);
+  const as=async(id,role='authenticated')=>{await db.exec('reset role');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[id||'']);await db.exec('set role '+role);};
+  const denied=async(sql,args=[])=>assert.rejects(db.query(sql,args));
+  await as(a);const post=(await db.query("select submit_community_post('Question title','A question with enough detail','help') as id")).rows[0].id;
+  await as(b);await denied("select submit_community_reply($1,'   ')",[post]);
+  const reply=(await db.query("select submit_community_reply($1,'A useful answer') as id",[post])).rows[0].id;
+  await denied("select submit_community_reply($1,'Repeated too soon')",[post]);
+  await denied("update community_replies set status='published'");
+  await denied("insert into community_replies(post_id,author_id,body,status) values($1,$2,'Forged','published')",[post,a]);
+  assert.equal((await db.query('select * from community_reply_submissions(false)')).rows[0].status,'pending');
+  await denied('select * from community_reply_submissions(true)');
+  await as(a);assert.equal((await db.query('select * from community_replies')).rows.length,0);
+  assert.equal((await db.query('select * from community_replies($1)',[post])).rows.length,0);
+  await denied("select review_community_reply($1,'published','')",[reply]);
+  await as(mod);assert.equal((await db.query('select * from community_reply_submissions(true)')).rows.length,1);
+  await denied("select review_community_reply($1,'rejected','')",[reply]);
+  await db.query("select review_community_reply($1,'published','Useful')",[reply]);
+  await denied("select review_community_reply($1,'published','Duplicate')",[reply]);
+  const own=(await db.query("select submit_community_reply($1,'Moderator reply') as id",[post])).rows[0].id;
+  await denied("select review_community_reply($1,'published','')",[own]);
+  await as(a);const feed=(await db.query('select * from community_replies($1)',[post])).rows;
+  assert.equal(feed.length,1);assert.equal(feed[0].author_name,'Member 2');assert.equal(feed[0].badges[0].id,'L2');
+  for(const key of ['author_id','email','review_note'])assert.equal(key in feed[0],false);
+  assert.equal((await db.query('select * from community_feed()')).rows[0].badges[0].id,'L0');
+  await db.exec('reset role');await db.query("update community_posts set status='pending' where id=$1",[post]);
+  await as(b);assert.equal((await db.query('select * from community_replies($1)',[post])).rows.length,0);
+  await denied("select submit_community_reply($1,'Private post')",[post]);
+  await as(null,'anon');await denied('select * from community_replies($1)',[post]);await denied("select submit_community_reply($1,'Anonymous')",[post]);
+  await db.exec('reset role');assert.ok((await db.query('select points from member_profiles')).rows.every(r=>r.points===0));
+  console.log('PASS: reply RLS, authenticated author binding, rate limit, pending privacy, badges for both authors, no private fields, no self-review, no duplicate review, hidden parents, anonymous denial, no XP and idempotent migration.');
+ }finally{await db.close();}
+})().catch(e=>{console.error(e);process.exit(1)});
