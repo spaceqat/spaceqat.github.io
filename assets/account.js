@@ -67,7 +67,7 @@
     if(user && !recovery){
       content.innerHTML=`<h2>${t('我的会员资料','My profile')}</h2><p class="email">${escape(user.email)}</p><p>${t('正在读取资料…','Loading profile…')}</p><button id="logout">${t('退出登录','Sign out')}</button>`;
       document.querySelector('#logout').onclick=logout;
-      const {data,error}=await client.from('member_profiles').select('display_name,bio,points').eq('id',user.id).single();
+      const {data,error}=await client.from('member_profiles').select('*').eq('id',user.id).single();
       if(ticket!==revision)return;
       if(error){
         const missing=error.code==='PGRST205';
@@ -79,6 +79,7 @@
       document.querySelector('#logout').onclick=logout;
       document.querySelector('#profile').onsubmit=e=>run(e,async f=>{const name=f.get('display_name').trim();if(!name)throw new Error('name');const {error}=await client.from('member_profiles').update({display_name:name,bio:f.get('bio').trim()}).eq('id',user.id);if(error)throw error;say(t('资料已保存。','Profile saved.'));});
       await window.decorateSpaceQatProfile({client,user,data,content,t,escape,current:()=>ticket===revision});
+      if(ticket===revision)window.mountSpaceQatAvatar?.({client,user,data,content,t,current:()=>ticket===revision});
       if(ticket===revision){const security=document.createElement('a');security.href='#security';security.className='dashboard-action';security.textContent=t('账号安全 · 更换邮箱 ↗','Account security · Change email ↗');content.querySelector('.dashboard-signout')?.prepend(security);content.querySelector('#profile-editor .email')?.after(security.cloneNode(true));}
       if(ticket===revision)await window.decorateSpaceQatSocial({client,content,t,current:()=>ticket===revision});
       return;

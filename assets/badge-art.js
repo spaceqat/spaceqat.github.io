@@ -4,6 +4,10 @@
   const star='<path d="m60 39 6 15 16 1-12 10 4 16-14-9-14 9 4-16-12-10 16-1Z" fill="#ffdb79"/>';
   const book='<path d="M60 48q-13-9-27-3v32q14-6 27 3 13-9 27-3V45q-14-6-27 3Z" fill="#fffaf0"/><path d="M60 49v30M40 54h11m-11 7h11m18-7h10m-10 7h10"/>';
   const symbols={
+    committee_member:'<path d="m27 47 33-22 33 22Z" fill="#b9ccee"/><path d="M32 84h56v8H32Z" fill="#b9ccee"/><path d="M38 51v29m22-29v29m22-29v29" stroke-width="7" stroke="#7895bf"/><path d="M27 48h66M28 93h64"/><circle class="badge-council-seal" cx="60" cy="38" r="4" fill="#ffe6a4"/>',
+    committee_representative:'<path d="M35 83q-14-12-9-28m59 28q14-12 9-28" stroke="#bd9649"/><path d="m30 74-7-3m7-8-8-5m68 16 7-3m-7-8 8-5" stroke="#bd9649"/><rect x="49" y="29" width="22" height="38" rx="11" fill="#efc96d"/><path d="M43 54v4a17 17 0 0 0 34 0v-4M60 76v15m-12 1h24M56 37h8m-8 7h8"/><path class="badge-voice-wave" d="M81 32q9 9 0 18m6-24q15 15 0 30" stroke="#c49b43"/>',
+    partner_member:'<path d="M29 34h25v9a6 6 0 1 0 12 0v-9h25v26h-9a6 6 0 1 0 0 12h9v20H66V81a6 6 0 1 0-12 0v11H29V72h9a6 6 0 1 0 0-12h-9Z" fill="#a9decd"/><path d="M29 60h9a6 6 0 1 1 0 12h-9m62-12h-9a6 6 0 1 0 0 12h9"/><path class="badge-build-link" d="m49 63 8 8 16-18" stroke="#287e69" stroke-width="4"/>',
+    partner_representative:'<path d="M33 91V29" stroke-width="3.5"/><g class="badge-host-flag"><path d="M34 31q14-9 29 0t27 0v29q-12 9-27 0t-29 0Z" fill="#f3b29e"/><path d="m59 41 4 4 4-4m-4 4v8" stroke="#a65549"/></g><path d="M27 93h66M45 87q0-12 10-12t10 12m7 0q0-12 10-12t10 12"/><circle cx="55" cy="68" r="5" fill="#ffe4c6"/><circle cx="82" cy="68" r="5" fill="#ffe4c6"/>',
     L0:cat+'<path d="M82 29q8-7 12 0 2 5-5 8v3m0 6v1"/>',
     L1:cat+'<path d="m31 76 29 10 29-10v17l-29 10-29-10Z" fill="#efc595"/><path d="M60 86v17m-29-27-8 9 28 10 9-9 9 9 28-10-8-9" fill="#ffe3b6"/>',
     L2:'<g transform="translate(-8 -5)" opacity=".28">'+cat+'</g><g transform="translate(5 5)">'+cat+'</g>',
@@ -30,7 +34,8 @@
   };
   window.spaceqatBadgeArt=(id,earned=false)=>{
     const key=String(id),route=/^[TCOM][0-2]$/.test(key)?key[0]:key;
-    const colors=route.startsWith('L')?['#e2f5ed','#78b8a4']:route==='T'?['#e4f2e2','#8fba8b']:route==='C'?['#fff1d9','#d7b574']:route==='O'?['#ffe8df','#d9a093']:route==='M'?['#e6edfc','#99afd6']:['#efe8fb','#b4a0d4'];
+    const organizationColors={committee_member:['#e6edfc','#7895bf'],committee_representative:['#fff1d9','#c49b43'],partner_member:['#e2f5ed','#55a58b'],partner_representative:['#ffe8df','#cd8c79']};
+    const colors=organizationColors[route]||(route.startsWith('L')?['#e2f5ed','#78b8a4']:route==='T'?['#e4f2e2','#8fba8b']:route==='C'?['#fff1d9','#d7b574']:route==='O'?['#ffe8df','#d9a093']:route==='M'?['#e6edfc','#99afd6']:['#efe8fb','#b4a0d4']);
     const tier=/^[TCOM][0-2]$/.test(key)?Number(key[1])+1:0;
     const dots=Array.from({length:tier},(_,i)=>`<circle cx="${60+(i-(tier-1)/2)*10}" cy="104" r="2.5" fill="${['#bb865c','#8399b2','#cb9a35'][tier-1]}" stroke="none"/>`).join('');
     const safeRoute=Object.hasOwn(symbols,route)?route:'other';

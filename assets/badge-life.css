@@ -8,6 +8,16 @@ svg.badge-illustration.is-earned{opacity:1;filter:drop-shadow(0 4px 5px #3887743
 .badge-illustration.is-earned:is(.badge-route-L3,.badge-route-A7,.badge-route-A8,.badge-route-campus) .badge-enamel{fill:#e4d5ff;stroke:#9770ca}
 .badge-illustration.is-earned:is(.badge-route-M,.badge-route-L4,.badge-route-A10) .badge-enamel{fill:#cce8ff;stroke:#619bcf}
 .badge-illustration.is-earned .badge-rim{stroke:#fff;stroke-width:3}
+.badge-illustration.is-earned.badge-route-committee_member .badge-enamel{fill:#dce7fb;stroke:#7895bf}
+.badge-illustration.is-earned.badge-route-committee_representative .badge-enamel{fill:#fff0c6;stroke:#c49b43}
+.badge-illustration.is-earned.badge-route-partner_member .badge-enamel{fill:#cdf1e4;stroke:#55a58b}
+.badge-illustration.is-earned.badge-route-partner_representative .badge-enamel{fill:#ffe0d4;stroke:#cd8c79}
+.badge-illustration.is-earned .badge-council-seal{animation:badge-charge 3s ease-in-out infinite}
+.badge-illustration.is-earned .badge-voice-wave{animation:badge-voice 2.8s ease-in-out infinite}
+.badge-illustration.is-earned .badge-build-link{animation:badge-voice 3.4s ease-in-out infinite}
+.badge-illustration.is-earned .badge-host-flag{transform-origin:34px 45px;animation:badge-flag 3.6s ease-in-out infinite}
+@keyframes badge-voice{0%,100%{opacity:.45}50%{opacity:1}}
+@keyframes badge-flag{0%,100%{transform:skewY(-3deg)}50%{transform:skewY(3deg)}}
 .badge-orbit-dot,.badge-orbit-echo{offset-path:path('M 102 61 A 42 21 0 1 1 18 61 A 42 21 0 1 1 102 61');offset-rotate:0deg;offset-distance:0%;stroke:#644b8a;stroke-width:2}
 .badge-orbit-echo{offset-distance:50%;stroke:#2f8d79}
 .badge-illustration.is-unearned .badge-orbit-echo{opacity:0}

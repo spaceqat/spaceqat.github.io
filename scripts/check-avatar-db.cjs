@@ -1,0 +1,25 @@
+const {PGlite}=require(process.env.PGLITE_MODULE||'@electric-sql/pglite'),fs=require('node:fs'),assert=require('node:assert/strict');
+(async()=>{const db=new PGlite();try{
+ await db.exec(`create role anon;create role authenticated;create schema auth;create schema storage;
+ create table auth.users(id uuid primary key,raw_user_meta_data jsonb);
+ create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
+ grant usage on schema auth,storage,public to authenticated,anon;
+ create table storage.buckets(id text primary key,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]);
+ create table storage.objects(bucket_id text,name text);alter table storage.objects enable row level security;grant select,insert,delete on storage.objects to authenticated;`);
+ await db.exec(fs.readFileSync('supabase/001_members.sql','utf8'));
+ await db.exec('alter table member_profiles add column public_id uuid default gen_random_uuid() not null unique');
+ await db.exec(fs.readFileSync('supabase/015_member_avatars.sql','utf8'));await db.exec(fs.readFileSync('supabase/015_member_avatars.sql','utf8'));
+ const a='00000000-0000-0000-0000-000000000001',b='00000000-0000-0000-0000-000000000002';
+ await db.query('insert into auth.users values($1,\'{}\'),($2,\'{}\')',[a,b]);
+ const rows=(await db.query('select id,public_id from member_profiles order by id')).rows;
+ const path=rows[0].public_id+'/10000000-0000-0000-0000-000000000001.webp';
+ const as=async id=>{await db.exec('reset role');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[id]);await db.exec('set role authenticated')};
+ await as(a);await db.query("insert into storage.objects values('member-avatars',$1)",[path]);await db.query('update member_profiles set avatar_path=$1 where id=$2',[path,a]);
+ await assert.rejects(db.query("update member_profiles set avatar_path='https://evil.invalid/a.svg'"));
+ await assert.rejects(db.query('update member_profiles set points=999'));
+ await as(b);await assert.rejects(db.query("insert into storage.objects values('member-avatars',$1)",[path]));assert.equal((await db.query('delete from storage.objects returning *')).rows.length,0);
+ assert.equal((await db.query('update member_profiles set avatar_path=null where id=$1 returning id',[a])).rows.length,0);
+ const publicRows=(await db.query('select * from community_avatar_paths($1)',[[rows[0].public_id]])).rows;assert.equal(publicRows[0].avatar_path,path);assert.deepEqual(Object.keys(publicRows[0]).sort(),['avatar_path','id']);
+ await as(a);assert.equal((await db.query('delete from storage.objects returning *')).rows.length,1);
+ console.log('PASS: migration repeatable, own-only uploads/deletion/profile updates, points protected, public-ID-only avatar lookup.');
+}finally{await db.close()}})().catch(e=>{console.error(e);process.exit(1)});
