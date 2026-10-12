@@ -29,7 +29,7 @@
       let p=permissions.data;
       if(permissions.error){const legacy=await client.rpc('community_can_review');p={forum:legacy.data===true};}
       if(ticket!==revision)return;
-      for(const [flag,hash,label] of [['forum','moderation',t('论坛审核台','Forum review')],['contributions','contribution-review',t('贡献审核台','Contribution review')],['admin','admin',t('社区管理台','Administration')]]){
+      for(const [flag,hash,label] of [['forum','moderation',t('论坛审核台','Forum review')],['contributions','contribution-review',t('贡献审核台','Contribution review')],['admin','admin',t('社区管理台','Administration')],['admin','mini-grant-review',t('迷你基金申请','Mini grant applications')]]){
         if(!p?.[flag])continue;const a=document.createElement('a');a.dataset.staff=flag;a.href='#'+hash;a.textContent='▦ '+label;a.setAttribute('aria-current',location.hash===a.hash?'page':'false');tabs.querySelector('.sidebar-note').before(a);
       }
     }catch{/* Missing optional permissions never prevent sign-in. */}
@@ -54,6 +54,8 @@
     document.querySelector('#language').href=(en?'account.html':'account.html?lang=en')+(['member','connections','forum'].includes(view)?location.hash:'');
     for(const a of tabs.querySelectorAll('a'))a.setAttribute('aria-current',a.hash==='#'+activeView?'page':'false');
     if(user&&!recovery&&view==='agreement'){await window.spaceqatAgreement.render({client,content,t,current:()=>ticket===revision});return;}
+    if(user&&!recovery&&['mini-grant','mini-grant-review'].includes(view)){await window.renderSpaceQatGrants({client,user,view,content,t,escape,current:()=>ticket===revision});return;}
+    if(user&&!recovery&&view==='security'){await window.renderSpaceQatSecurity({client,user,content,t,escape,current:()=>ticket===revision,onUserUpdate:updated=>{if(ticket===revision&&updated.id===user?.id)user=updated;}});return;}
     if(user&&!recovery&&['member','connections'].includes(view)){await window.renderSpaceQatSocial({client,view,content,t,escape,current:()=>ticket===revision});return;}
     if(user&&!recovery&&['contributions','contribution-review','admin'].includes(view)){
       await window.renderSpaceQatContributions({client,user,view,content,t,escape,say,current:()=>ticket===revision});return;
@@ -77,6 +79,7 @@
       document.querySelector('#logout').onclick=logout;
       document.querySelector('#profile').onsubmit=e=>run(e,async f=>{const name=f.get('display_name').trim();if(!name)throw new Error('name');const {error}=await client.from('member_profiles').update({display_name:name,bio:f.get('bio').trim()}).eq('id',user.id);if(error)throw error;say(t('资料已保存。','Profile saved.'));});
       await window.decorateSpaceQatProfile({client,user,data,content,t,escape,current:()=>ticket===revision});
+      if(ticket===revision){const security=document.createElement('a');security.href='#security';security.className='dashboard-action';security.textContent=t('账号安全 · 更换邮箱 ↗','Account security · Change email ↗');content.querySelector('.dashboard-signout')?.prepend(security);content.querySelector('#profile-editor .email')?.after(security.cloneNode(true));}
       if(ticket===revision)await window.decorateSpaceQatSocial({client,content,t,current:()=>ticket===revision});
       return;
     }

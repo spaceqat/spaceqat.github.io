@@ -1,0 +1,31 @@
+const {PGlite}=require(process.env.PGLITE_MODULE||'@electric-sql/pglite'),fs=require('node:fs'),assert=require('node:assert/strict');
+(async()=>{const db=new PGlite();try{
+ await db.exec(`create role anon;create role authenticated;create role service_role bypassrls;create schema auth;create schema storage;
+ create table auth.users(id uuid primary key,email text,raw_user_meta_data jsonb);create table auth.identities(user_id uuid,provider text,provider_id text,identity_data jsonb);
+ create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
+ grant usage on schema public,auth,storage to anon,authenticated,service_role;
+ create table storage.buckets(id text primary key,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]);
+ create table storage.objects(id uuid default gen_random_uuid(),bucket_id text,name text,metadata jsonb,unique(bucket_id,name));
+ alter table storage.objects enable row level security;grant select,insert,delete on storage.objects to authenticated;`);
+ for(const f of ['001_members','002_community','003_category_publication','004_github_contributions','014_mini_grants','014_mini_grants'])await db.exec(fs.readFileSync('supabase/'+f+'.sql','utf8'));
+ const [a,b,admin,reviewer]=[1,2,3,4].map(n=>'00000000-0000-0000-0000-00000000000'+n),id='10000000-0000-0000-0000-000000000001';
+ for(const user of [a,b,admin,reviewer])await db.query('insert into auth.users values($1,$2,$3)',[user,'user@example.invalid','{"display_name":"Member"}']);
+ await db.query("insert into member_badges(user_id,badge_id) values($1,'L3')",[a]);await db.query("insert into member_roles(user_id,role) values($1,'admin')",[admin]);await db.query('insert into community_moderators values($1)',[reviewer]);
+ const as=async(user,role='authenticated')=>{await db.exec('reset role');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[user||'']);await db.exec('set role '+role);};
+ const args=[id,'Quantum project','Applicant','University','12345678','contact@example.invalid',3000,3,11,true];
+ const sql='select submit_mini_grant($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) id';
+ await as(b);await assert.rejects(db.query(sql,args));await assert.rejects(db.query("insert into storage.objects(bucket_id,name,metadata) values('mini-grant-proposals',$1,'{}')",[b+'/'+id+'.pdf']));
+ await as(a);assert.equal((await db.query('select mini_grant_eligible() ok')).rows[0].ok,true);await assert.rejects(db.query(sql,args));
+ await db.query("insert into storage.objects(bucket_id,name,metadata) values('mini-grant-proposals',$1,'{\"mimetype\":\"application/pdf\",\"size\":1000}')",[a+'/'+id+'.pdf']);
+ for(const [index,value] of [[6,3001],[6,3000.001],[6,0],[7,5],[7,1],[8,12],[9,false],[5,'bad-email']]){const bad=[...args];bad[index]=value;await assert.rejects(db.query(sql,bad));}
+ assert.equal((await db.query(sql,args)).rows[0].id,id);assert.equal((await db.query(sql,args)).rows[0].id,id);
+ assert.equal((await db.query('select * from mini_grant_applications')).rows.length,1);
+ assert.equal((await db.query('delete from storage.objects returning *')).rows.length,0,'submitted proposals cannot be removed');
+ await assert.rejects(db.query("update mini_grant_applications set requested_amount=1"));
+ await as(b);assert.equal((await db.query('select * from mini_grant_applications')).rows.length,0);assert.equal((await db.query('select * from storage.objects')).rows.length,0);await assert.rejects(db.query(sql,args));
+ await as(reviewer);assert.equal((await db.query('select * from mini_grant_applications')).rows.length,0);assert.equal((await db.query('select * from storage.objects')).rows.length,0);
+ await as(admin);assert.equal((await db.query('select * from mini_grant_applications')).rows.length,1);assert.equal((await db.query('select * from storage.objects')).rows.length,1);
+ await as(null,'anon');await assert.rejects(db.query('select * from mini_grant_applications'));await assert.rejects(db.query(sql,args));
+ await db.exec('reset role');await db.query("delete from member_badges where user_id=$1",[a]);await db.query("insert into member_badges(user_id,badge_id) values($1,'L5')",[a]);await as(a);assert.equal((await db.query('select mini_grant_eligible() ok')).rows[0].ok,true);
+ console.log('PASS: L3+ eligibility, private applications/files, admin-only intake, ordinary reviewer denial, amount/format bounds, PDF requirement, idempotency and immutable submitted documents.');
+}finally{await db.close();}})().catch(e=>{console.error(e);process.exit(1)});
