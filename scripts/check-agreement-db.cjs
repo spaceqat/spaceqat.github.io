@@ -1,0 +1,16 @@
+const {PGlite}=require(process.env.PGLITE_MODULE||'@electric-sql/pglite');
+const fs=require('node:fs'),assert=require('node:assert/strict');
+(async()=>{const db=new PGlite();await db.exec(`create role anon;create role authenticated;create schema auth;create table auth.users(id uuid primary key,raw_user_meta_data jsonb);create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;grant usage on schema public,auth to anon,authenticated;`);
+for(const file of ['001_members.sql','002_community.sql','007_participation_agreement.sql'])await db.exec(fs.readFileSync('supabase/'+file,'utf8'));
+await db.exec(fs.readFileSync('supabase/007_participation_agreement.sql','utf8'));
+const a='00000000-0000-0000-0000-000000000001',b='00000000-0000-0000-0000-000000000002';for(const id of [a,b])await db.query('insert into auth.users values($1,$2)',[id,JSON.stringify({display_name:'test'})]);
+await db.exec(`set role authenticated;set request.jwt.claim.sub='${a}';`);
+await assert.rejects(db.query("select public.accept_participation_agreement('bad')"));
+await assert.rejects(db.query("insert into public.member_agreements values($1,'2026-10-12-v1',now())",[b]));
+const first=(await db.query("select public.accept_participation_agreement('2026-10-12-v1') as receipt")).rows[0].receipt;
+const second=(await db.query("select public.accept_participation_agreement('2026-10-12-v1') as receipt")).rows[0].receipt;assert.equal(String(first),String(second));
+assert.equal((await db.query('select * from public.member_agreements')).rows.length,1);assert.equal((await db.query("select * from public.member_badges where badge_id='L0'")).rows.length,1);
+assert.equal((await db.query('select points from public.member_profiles')).rows[0].points,0);
+await db.exec(`set request.jwt.claim.sub='${b}'`);assert.equal((await db.query('select * from public.member_agreements')).rows.length,0);
+await db.exec("reset role;set role anon;set request.jwt.claim.sub=''");await assert.rejects(db.query("select public.accept_participation_agreement('2026-10-12-v1')"));
+await db.close();console.log('PASS: agreement persistence, idempotence, own-account RLS, no forged receipts, version rejection, anonymous denial, L0 only and zero XP.');})().catch(e=>{console.error(e);process.exit(1)});

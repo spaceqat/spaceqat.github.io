@@ -49,9 +49,10 @@
     document.querySelector('main').classList.toggle('member-space',!!user&&!recovery);
     document.body.classList.toggle('signed-in',!!user&&!recovery);
     void refreshStaffNavigation(ticket);
-    const view=location.hash.slice(1);
+    const view=location.hash.slice(1).split('/')[0];
     const activeView=['badges','forum','submissions','moderation','contributions','contribution-review','admin'].includes(view)?view:'profile';
     for(const a of tabs.querySelectorAll('a'))a.setAttribute('aria-current',a.hash==='#'+activeView?'page':'false');
+    if(user&&!recovery&&view==='agreement'){await window.spaceqatAgreement.render({client,content,t,current:()=>ticket===revision});return;}
     if(user&&!recovery&&['contributions','contribution-review','admin'].includes(view)){
       await window.renderSpaceQatContributions({client,user,view,content,t,escape,say,current:()=>ticket===revision});return;
     }
