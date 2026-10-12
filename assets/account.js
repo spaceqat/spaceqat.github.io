@@ -50,9 +50,11 @@
     document.body.classList.toggle('signed-in',!!user&&!recovery);
     void refreshStaffNavigation(ticket);
     const view=location.hash.slice(1).split('/')[0];
-    const activeView=['badges','forum','submissions','moderation','contributions','contribution-review','admin'].includes(view)?view:'profile';
+    const activeView=view==='member'?'forum':['badges','forum','submissions','moderation','contributions','contribution-review','admin'].includes(view)?view:'profile';
+    document.querySelector('#language').href=(en?'account.html':'account.html?lang=en')+(['member','connections','forum'].includes(view)?location.hash:'');
     for(const a of tabs.querySelectorAll('a'))a.setAttribute('aria-current',a.hash==='#'+activeView?'page':'false');
     if(user&&!recovery&&view==='agreement'){await window.spaceqatAgreement.render({client,content,t,current:()=>ticket===revision});return;}
+    if(user&&!recovery&&['member','connections'].includes(view)){await window.renderSpaceQatSocial({client,view,content,t,escape,current:()=>ticket===revision});return;}
     if(user&&!recovery&&['contributions','contribution-review','admin'].includes(view)){
       await window.renderSpaceQatContributions({client,user,view,content,t,escape,say,current:()=>ticket===revision});return;
     }
@@ -75,6 +77,7 @@
       document.querySelector('#logout').onclick=logout;
       document.querySelector('#profile').onsubmit=e=>run(e,async f=>{const name=f.get('display_name').trim();if(!name)throw new Error('name');const {error}=await client.from('member_profiles').update({display_name:name,bio:f.get('bio').trim()}).eq('id',user.id);if(error)throw error;say(t('资料已保存。','Profile saved.'));});
       await window.decorateSpaceQatProfile({client,user,data,content,t,escape,current:()=>ticket===revision});
+      if(ticket===revision)await window.decorateSpaceQatSocial({client,content,t,current:()=>ticket===revision});
       return;
     }
     const mode=recovery&&user?'password':(['signup','forgot','resend'].includes(location.hash.slice(1))?location.hash.slice(1):'login');

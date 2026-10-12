@@ -7,7 +7,7 @@
   const t=(zh,en)=>document.documentElement.lang.startsWith('en')?en:zh;
   function mount(){
     const root=document.querySelector('.member-space #content')||document.querySelector('.app-shell #main');
-    if(!root||!root.querySelector('.profile-hero')||root.querySelector('.desk-tools'))return;
+    if(!root||!root.querySelector('.profile-hero:not(.visitor-hero)')||root.querySelector('.desk-tools'))return;
     const bar=document.createElement('div');bar.className='desk-tools';
     bar.innerHTML=`<div class="desk-shortcuts"><a href="#forum">${t('逛逛论坛','Visit the forum')} <span aria-hidden="true">↗</span></a><a href="#badges">${t('翻翻徽章册','Browse badges')} <span aria-hidden="true">↗</span></a></div><details class="desk-preferences"><summary>${t('桌面配色','Desk palette')} <span aria-hidden="true">◒</span></summary><div class="desk-swatches" role="group" aria-label="${t('选择桌面配色','Choose a desk palette')}">${palettes.map((id,i)=>`<button type="button" data-palette="${id}" aria-pressed="${palette===id}"><i aria-hidden="true"></i>${t(['云白','鼠尾草','暮色紫'][i],['Cloud','Sage','Dusk'][i])}</button>`).join('')}</div></details>`;
     root.querySelector('.profile-hero').before(bar);
@@ -32,7 +32,7 @@
   let index=0,queued=false;
   function animate(node,frames,options){if(!reduced.matches&&!document.hidden){node.getAnimations().forEach(a=>a.cancel());node.animate(frames,options);}}
   function mount(){
-    queued=false;const hero=root.querySelector('.profile-hero');if(!hero||root.querySelector('.explore-deck'))return;
+    queued=false;const hero=root.querySelector('.profile-hero:not(.visitor-hero)');if(!hero||root.querySelector('.explore-deck'))return;
     const companion=hero.querySelector('.hero-companion');
     if(companion){
       companion.removeAttribute('aria-hidden');companion.classList.add('interactive-companion');
