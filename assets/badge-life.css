@@ -1,0 +1,36 @@
+/* Earned appearance is presentational; never changes ownership. */
+svg.badge-illustration.is-unearned{filter:grayscale(1);opacity:.62}
+svg.badge-illustration.is-unearned .badge-enamel{fill:#edf0ef;stroke:#9caaa5}
+svg.badge-illustration.is-unearned .badge-sparkle{opacity:.25}
+svg.badge-illustration.is-earned{opacity:1;filter:drop-shadow(0 4px 5px #38877430)}
+.badge-illustration.is-earned .badge-enamel{fill:#c9f3df;stroke:#329c81;stroke-width:2.6}
+.badge-illustration.is-earned:is(.badge-route-C,.badge-route-L5,.badge-route-A5,.badge-route-A11) .badge-enamel{fill:#ffe7ad;stroke:#cf9832}
+.badge-illustration.is-earned:is(.badge-route-L3,.badge-route-A7,.badge-route-A8,.badge-route-campus) .badge-enamel{fill:#e4d5ff;stroke:#9770ca}
+.badge-illustration.is-earned:is(.badge-route-M,.badge-route-L4,.badge-route-A10) .badge-enamel{fill:#cce8ff;stroke:#619bcf}
+.badge-illustration.is-earned .badge-rim{stroke:#fff;stroke-width:3}
+.badge-orbit-dot,.badge-orbit-echo{offset-path:path('M 102 61 A 42 21 0 1 1 18 61 A 42 21 0 1 1 102 61');offset-rotate:0deg;offset-distance:0%;stroke:#644b8a;stroke-width:2}
+.badge-orbit-echo{offset-distance:50%;stroke:#2f8d79}
+.badge-illustration.is-unearned .badge-orbit-echo{opacity:0}
+.badge-illustration.is-earned .badge-orbit-dot{animation:badge-orbit 4.8s linear infinite}
+.badge-illustration.is-earned .badge-orbit-echo{animation:badge-orbit 4.8s linear -2.4s infinite}
+.badge-illustration.is-earned .badge-sparkle{transform-box:fill-box;transform-origin:center;animation:badge-twinkle 3.2s ease-in-out infinite}
+.badge-illustration.is-earned:not(.badge-route-L3):not(.badge-route-A8) .badge-symbol{animation:badge-bob 4s ease-in-out infinite;transform-origin:60px 65px}
+.badge-illustration.is-earned.badge-route-L2 .badge-symbol>g:first-child{animation:badge-superpose 3.4s ease-in-out infinite}
+.badge-illustration.is-earned.badge-route-M .badge-symbol>path:first-of-type{transform-origin:60px 61px;animation:badge-compass 4s ease-in-out infinite}
+.badge-illustration.is-earned.badge-route-T .badge-symbol>circle{animation:badge-bubble 2.8s ease-in-out infinite}
+.badge-illustration.is-earned.badge-route-L4 .badge-symbol>path:nth-last-child(2){animation:badge-charge 2.6s ease-in-out infinite}
+.badge-illustration.is-earned.badge-route-C .badge-symbol>path:last-child,.badge-illustration.is-earned .badge-core{transform-box:fill-box;transform-origin:center;animation:badge-twinkle 3.2s ease-in-out infinite}
+.badge-illustration.is-earned.badge-route-O .badge-symbol>path:last-child{animation:badge-connection 4s linear infinite}
+.badge-illustration.is-preview{filter:drop-shadow(0 0 9px #a980e650)}
+.motion-preview[aria-pressed="true"]{background:#ede3ff!important;color:#614592!important;border:1px solid #b39acf}
+@keyframes badge-orbit{from{offset-distance:0%}to{offset-distance:100%}}
+@keyframes badge-twinkle{0%,100%{opacity:.65;transform:scale(.85)}50%{opacity:1;transform:scale(1.15)}}
+@keyframes badge-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+@keyframes badge-superpose{0%,100%{opacity:.25}50%{opacity:.75}}
+@keyframes badge-compass{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(18deg)}}
+@keyframes badge-bubble{0%,100%{transform:translateY(0);opacity:1}60%{transform:translateY(-10px);opacity:.3}}
+@keyframes badge-charge{0%,100%{fill:#ffcf63;opacity:.7}50%{fill:#ff9d32;opacity:1}}
+@keyframes badge-connection{to{stroke-dashoffset:-32}}
+.motion-paused .badge-illustration *{animation-play-state:paused!important}
+.badge-illustration:not(.motion-visible) *{animation-play-state:paused}
+@media(prefers-reduced-motion:reduce){.badge-illustration *{animation:none!important;transition:none!important}}

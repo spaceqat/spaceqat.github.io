@@ -7,7 +7,7 @@
     L0:cat+'<path d="M82 29q8-7 12 0 2 5-5 8v3m0 6v1"/>',
     L1:cat+'<path d="m31 76 29 10 29-10v17l-29 10-29-10Z" fill="#efc595"/><path d="M60 86v17m-29-27-8 9 28 10 9-9 9 9 28-10-8-9" fill="#ffe3b6"/>',
     L2:'<g transform="translate(-8 -5)" opacity=".28">'+cat+'</g><g transform="translate(5 5)">'+cat+'</g>',
-    L3:'<ellipse cx="60" cy="61" rx="42" ry="21" transform="rotate(-28 60 61)"/>'+cat+'<circle cx="96" cy="41" r="5" fill="#c2aff5"/>',
+    L3:'<ellipse cx="60" cy="61" rx="42" ry="21" transform="rotate(-28 60 61)"/>'+cat+'<g transform="rotate(-28 60 61)"><circle class="badge-orbit-dot" cx="0" cy="0" r="5.5" fill="#a978f3"/><circle class="badge-orbit-echo" cx="0" cy="0" r="3" fill="#50cdb2"/></g>',
     L4:cat+'<path d="m79 85 9-17-1 11h10L84 98l3-13Z" fill="#ffcf63"/><path d="m25 43 3-7m-2 45-4 5"/>',
     L5:'<path d="m35 29 14 6 18-10 21 10"/><circle cx="35" cy="29" r="3" fill="#ffe398"/><circle cx="67" cy="25" r="3" fill="#ffe398"/>'+cat+'<path d="m85 77 3 7 8 1-6 5 2 8-7-4-7 4 2-8-6-5 8-1Z" fill="#ffdc78"/>',
     T:'<path d="M49 34h22m-17 0v23L37 82q-4 10 8 10h30q12 0 8-10L66 57V34" fill="#fff9ec"/><path d="m44 73 32 0 8 13q1 6-9 6H45q-10 0-8-6Z" fill="#a5dfcc"/><path d="m52 78-5 4 5 4m16-8 5 4-5 4"/><circle cx="57" cy="65" r="3" fill="#e8c86c"/>',
@@ -22,7 +22,7 @@
     A5:'<path d="m50 64 5 30h10l5-30Z" fill="#d9b4e9"/><path d="M60 26q23 19 12 34-12 15-25 0-10-12 5-23-1 12 6 12 8-4 2-23Z" fill="#ffbd88"/>',
     A6:'<ellipse cx="60" cy="65" rx="19" ry="24" fill="#bae2b4"/><path d="M60 43v45m-15-41-7-9m37 9 7-9M40 59H29m51 0h11M40 73l-12 6m52-6 12 6M51 40q9-10 18 0"/><circle cx="52" cy="57" r="2"/><circle cx="68" cy="57" r="2"/>',
     A7:'<ellipse cx="60" cy="62" rx="35" ry="24" fill="#d5c6f1"/><ellipse cx="60" cy="62" rx="23" ry="15" fill="#faf7ff"/><path d="m30 82 58-42m-4-3 7 1-1 7"/><circle cx="31" cy="81" r="6" fill="#ffc99c"/>',
-    A8:'<circle cx="60" cy="61" r="13" fill="#ffdb91"/><ellipse cx="60" cy="61" rx="38" ry="21" transform="rotate(-25 60 61)"/><ellipse cx="60" cy="61" rx="38" ry="21" transform="rotate(45 60 61)"/><circle cx="94" cy="46" r="5" fill="#b8ace9"/>',
+    A8:'<circle class="badge-core" cx="60" cy="61" r="13" fill="#ffdb91"/><ellipse cx="60" cy="61" rx="42" ry="21" transform="rotate(-25 60 61)"/><ellipse cx="60" cy="61" rx="42" ry="21" transform="rotate(45 60 61)"/><g transform="rotate(-25 60 61)"><circle class="badge-orbit-dot" cx="0" cy="0" r="5" fill="#a978f3"/></g><g transform="rotate(45 60 61)"><circle class="badge-orbit-echo" cx="0" cy="0" r="4" fill="#50cdb2"/></g>',
     A9:cat+'<path d="M31 86h-9m13 7H20m62-7 10-3 7 9H69v-8" fill="#b5cbee"/>',
     A10:'<path d="m60 29 28 11v22q-1 22-28 34-27-12-28-34V40Z" fill="#c6dfed"/><path d="m46 61 10 10 20-23"/>',
     A11:star+'<path d="M29 87q15-14 31-3 16-11 31 3M60 85v12"/><circle cx="28" cy="35" r="3" fill="#e6bcde"/>',
@@ -33,6 +33,7 @@
     const colors=route.startsWith('L')?['#e2f5ed','#78b8a4']:route==='T'?['#e4f2e2','#8fba8b']:route==='C'?['#fff1d9','#d7b574']:route==='O'?['#ffe8df','#d9a093']:route==='M'?['#e6edfc','#99afd6']:['#efe8fb','#b4a0d4'];
     const tier=/^[TCOM][0-2]$/.test(key)?Number(key[1])+1:0;
     const dots=Array.from({length:tier},(_,i)=>`<circle cx="${60+(i-(tier-1)/2)*10}" cy="104" r="2.5" fill="${['#bb865c','#8399b2','#cb9a35'][tier-1]}" stroke="none"/>`).join('');
-    return `<svg class="badge-illustration ${earned?'is-earned':'is-unearned'}" viewBox="0 0 120 128" aria-hidden="true" focusable="false"><path d="m38 93-6 28 28-12 28 12-6-28" fill="${colors[1]}" stroke="#fff" stroke-width="3"/><rect x="9" y="7" width="102" height="102" rx="35" fill="${colors[0]}" stroke="${colors[1]}" stroke-width="2"/><rect x="15" y="13" width="90" height="90" rx="29" fill="none" stroke="#fff" stroke-width="2"/><g fill="none" stroke="#3d5862" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${symbols[route]||star}</g>${dots}<path d="m99 13 2 6 6 2-6 2-2 6-2-6-6-2 6-2Z" fill="#fff"/></svg>`;
+    const safeRoute=Object.hasOwn(symbols,route)?route:'other';
+    return `<svg class="badge-illustration badge-route-${safeRoute} ${earned?'is-earned':'is-unearned'}" viewBox="0 0 120 128" aria-hidden="true" focusable="false"><path class="badge-ribbon" d="m38 93-6 28 28-12 28 12-6-28" fill="${colors[1]}" stroke="#fff" stroke-width="3"/><rect class="badge-enamel" x="9" y="7" width="102" height="102" rx="35" fill="${colors[0]}" stroke="${colors[1]}" stroke-width="2"/><rect class="badge-rim" x="15" y="13" width="90" height="90" rx="29" fill="none" stroke="#fff" stroke-width="2"/><g class="badge-symbol" fill="none" stroke="#3d5862" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${symbols[route]||star}</g>${dots}<path class="badge-sparkle" d="m99 13 2 6 6 2-6 2-2 6-2-6-6-2 6-2Z" fill="#fff"/></svg>`;
   };
 })();

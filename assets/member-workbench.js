@@ -78,6 +78,17 @@
     for(let i=0;i<10;i++){const dot=document.createElement('i'),angle=i*Math.PI/5;dot.style.setProperty('--dx',Math.cos(angle)*75+'px');dot.style.setProperty('--dy',Math.sin(angle)*65+'px');particles.append(dot);}
     host.append(particles);setTimeout(()=>particles.remove(),700);
   }
+  function previewBadge(detail,demo=false){
+    if(detail.querySelector('.motion-preview'))return;
+    const art=detail.querySelector('.badge-illustration');if(!art)return;
+    visibility.observe(art);
+    const originallyEarned=art.classList.contains('is-earned');
+    const button=document.createElement('button');button.type='button';button.className=(demo?'btn':'secondary')+' motion-preview';button.setAttribute('aria-pressed','false');
+    const note=document.createElement('span');note.className='motion-preview-note';note.setAttribute('role','status');
+    const paint=active=>{button.textContent=active?t('↶ 返回实际状态','↶ Return to actual state'):t('✦ 预览点亮效果','✦ Preview unlock');note.textContent=active?t('正在预览点亮后的色彩与动态；实际徽章和积分不变。','Previewing earned colors and motion; your badges and XP are unchanged.'):t('仅外观预览，不会授予徽章或积分。','Visual preview only. No badge or XP is awarded.');};paint(false);
+    detail.querySelector('.guide-status')?.after(button,note);
+    button.onclick=()=>{const active=button.getAttribute('aria-pressed')!=='true';button.setAttribute('aria-pressed',String(active));art.classList.toggle('is-preview',active);art.classList.toggle('is-earned',active||originallyEarned);art.classList.toggle('is-unearned',!active&&!originallyEarned);paint(active);if(active)burst(art);};
+  }
   function count(node){
     const text=node.textContent.trim(),match=text.match(/^\d+/);if(!match||numbers.get(node)===text)return;
     numbers.set(node,text);const prior=activeCounts.get(node);if(prior)cancelAnimationFrame(prior);
@@ -92,9 +103,10 @@
   function mount(){
     frame=0;
     root.querySelectorAll('.dashboard-stats b,.stat b').forEach(count);
-    root.querySelectorAll('.profile-hero,.dashboard-card,.panel,.real-badge,.badge-card,.progress-track>span').forEach((node,i)=>{
+    root.querySelectorAll('.profile-hero,.dashboard-card,.panel,.real-badge,.badge-card,.progress-track>span,.badge-illustration').forEach((node,i)=>{
       if(seen.has(node))return;seen.add(node);
       visibility.observe(node);
+      if(node.matches('.badge-illustration'))return;
       if(node.matches('.progress-track>span')){node.classList.add('motion-progress');return;}
       if(enabled()&&!node.hidden)node.animate([{opacity:0,transform:'translateY(10px)'},{opacity:1,transform:'translateY(0)'}],{duration:400,delay:Math.min(i,6)*50,easing:'ease-out'});
     });
@@ -110,13 +122,7 @@
       }
     });
     updateLockedProgress();
-    root.querySelectorAll('.badge-rule-detail').forEach(detail=>{
-      if(detail.querySelector('.motion-preview'))return;
-      const button=document.createElement('button');button.type='button';button.className='secondary motion-preview';button.textContent=t('✦ 预览点亮效果','✦ Preview unlock');
-      const note=document.createElement('span');note.className='motion-preview-note';note.textContent=t('仅动效预览，不会授予徽章或积分。','Visual preview only. No badge or XP is awarded.');
-      detail.querySelector('.guide-status')?.after(button,note);
-      button.onclick=()=>burst(detail.querySelector('.badge-illustration'));
-    });
+    root.querySelectorAll('.badge-rule-detail').forEach(detail=>previewBadge(detail));
     root.querySelectorAll('a').forEach(link=>{
       if(link.querySelector('.motion-arrow'))return;
       const walker=document.createTreeWalker(link,NodeFilter.SHOW_TEXT);let node;
@@ -131,8 +137,7 @@
   window.addEventListener('spaceqat-progress-ready',updateLockedProgress);
   const demoModal=document.querySelector('#modal');if(demoModal)new MutationObserver(()=>{
     // Demo dialogs live outside the main renderer; use the same safe preview.
-    const detail=demoModal.querySelector('.badge-rule-detail');if(!detail||detail.querySelector('.motion-preview'))return;
-    const button=document.createElement('button');button.type='button';button.className='btn motion-preview';button.textContent=t('✦ 预览点亮效果（仅预览）','✦ Preview unlock (visual only)');detail.querySelector('.guide-status')?.after(button);button.onclick=()=>burst(detail.querySelector('.badge-illustration'));
+    const detail=demoModal.querySelector('.badge-rule-detail');if(detail)previewBadge(detail,true);
   }).observe(demoModal,{childList:true,subtree:true});
   function resetTilt(){if(tiltFrame)cancelAnimationFrame(tiltFrame);tiltFrame=0;if(tilted){tilted.style.removeProperty('--tilt-x');tilted.style.removeProperty('--tilt-y');tilted.classList.remove('is-tilting');tilted=null;}}
   root.addEventListener('pointermove',event=>{
