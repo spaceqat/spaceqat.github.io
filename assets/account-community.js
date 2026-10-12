@@ -67,7 +67,9 @@ window.renderSpaceQatCommunity=async ({client,user,view,content,t,escape,say,cur
       return;
     }
     if(view==='forum'){
-      const threadId=location.hash.split('/')[1];
+      const segments=location.hash.split('/');
+      const board=segments[1]==='board'&&Object.hasOwn(categories,segments[2])?segments[2]:null;
+      const threadId=segments[1]==='board'?null:segments[1];
       if(threadId){
         const result=await client.rpc('community_member_post_detail',{thread_id:threadId});if(!current())return;if(result.error){failure();return;}
         const p=result.data;
@@ -81,18 +83,25 @@ window.renderSpaceQatCommunity=async ({client,user,view,content,t,escape,say,cur
         if(p.can_reply)bindReplies(article);else article.querySelector('.reply-thread').remove();
         return;
       }
-      const [feed,role]=await Promise.all([client.rpc('community_member_feed',{page_offset:0}),client.rpc('community_can_review')]);
+      const feedArgs=offset=>({page_offset:offset,...(board?{category_filter:board}:{})});
+      const [feed,role]=await Promise.all([client.rpc('community_member_feed',feedArgs(0)),client.rpc('community_can_review')]);
       if(!current())return;if(feed.error){failure();return;}
       content.innerHTML=`<div class="section-heading"><h2>${headings.forum}</h2>${role.data===true?`<a href="#moderation">${t('审核投稿 ↗','Review submissions ↗')}</a>`:''}</div><details class="post-compose"><summary>${t('＋ 发布帖子','＋ Write a post')}</summary><p>${t('提问与互助、FatQat 开源、校园交流可直接发布；知识与作品、社区公告和活动审核通过后发布。帖子会展示你的用户名与已获得的徽章。','Questions & help, FatQat open source and Campus publish immediately. Knowledge & projects, Announcements and Events require review. Posts display your username and earned badges.')}</p><form id="post-form"><label>${t('标题','Title')}<input name="title" minlength="3" maxlength="160" required></label><label>${t('分类','Category')}<select name="category">${Object.entries(categories).map(([id,name])=>`<option value="${id}">${name}</option>`).join('')}</select></label><label>${t('正文','Body')}<textarea name="body" minlength="10" maxlength="20000" required></textarea></label><p id="publication-hint" class="helper" aria-live="polite"></p><button>${t('直接发布','Publish now')}</button></form></details><div id="feed">${feed.data.map(post).join('')||`<p class="empty">${t('还没有已发布的帖子。欢迎提交第一篇分享。','No published posts yet. Be the first to submit a post.')}</p>`}</div><button id="more-posts" class="secondary" ${feed.data.length<20?'hidden':''}>${t('加载更多','Load more')}</button>`;
       const compose=content.querySelector('#post-form');
+      const descriptions={help:t('问题、解答与经验互助','Ask questions and help each other'),fatqat:t('代码讨论、开发反馈与开源协作','Code, feedback and open-source collaboration'),campus:t('校园伙伴、学习小组与日常交流','Campus connections and study groups'),knowledge:t('教程、研究笔记与作品分享','Tutorials, research notes and projects'),community:t('社区消息、规则与重要通知','Community news and important updates'),event:t('活动发起与 Host / Co-host / Sponsor 申请','Events and Host / Co-host / Sponsor requests')};
+      const boards=document.createElement('section');boards.className='forum-boards';boards.setAttribute('aria-label',t('论坛板块','Forum boards'));
+      boards.innerHTML=`<nav class="forum-board-grid" aria-label="${t('选择板块','Select a board')}"><a class="forum-board all-board" href="#forum" ${!board?'aria-current="page"':''}><strong>${t('全部讨论','All discussions')}</strong><small>${t('浏览所有已发布帖子','All published posts')}</small></a>${Object.entries(categories).map(([id,name],i)=>`<a class="forum-board" data-board="${id}" href="#forum/board/${id}" ${board===id?'aria-current="page"':''}><span class="board-symbol" aria-hidden="true">${['?','⌘','◎','▤','◈','⚑'][i]}</span><strong>${name}</strong><small>${descriptions[id]}</small><em>${['knowledge','community','event'].includes(id)?t('审核后发布','Reviewed before publishing'):t('直接发布','Publish directly')}</em></a>`).join('')}</nav><div class="board-heading"><h3>${board?categories[board]:t('全部讨论','All discussions')}</h3><p>${board?descriptions[board]:t('选择一个板块，找到你感兴趣的讨论。','Choose a board to find your next conversation.')}</p></div>`;
+      content.querySelector('.post-compose').before(boards);
+      if(board)compose.elements.category.value=board;
+      if(!feed.data.length)content.querySelector('#feed .empty').textContent=board?t('这个板块还没有公开帖子，欢迎开启第一场讨论。','No public posts in this board yet. Start the conversation.'):t('还没有已发布的帖子。欢迎提交第一篇分享。','No published posts yet. Be the first to submit a post.');
       listLinks(content);
       const eventPermission=await client.rpc('community_can_submit_event');if(!current())return;
       const canEvent=eventPermission.data===true;
       compose.elements.category.closest('label').insertAdjacentHTML('afterend',`<label id="event-role-field" hidden>${t('活动申请类型','Event request type')}<select name="event_role"><option value="organize">${t('发起活动','Organize an event')}</option><option value="host">Host</option><option value="cohost">Co-host</option><option value="sponsor">Sponsor</option></select></label>`);
       const updatePolicy=()=>{const event=compose.elements.category.value==='event',review=['knowledge','community','event'].includes(compose.elements.category.value);compose.querySelector('button').disabled=event&&!canEvent;content.querySelector('#event-role-field').hidden=!event;compose.querySelector('button').textContent=review?t('提交审核','Submit for review'):t('直接发布','Publish now');content.querySelector('#publication-hint').textContent=event?t('仅经认证的委员单位代表、共建单位代表可提交。请写明活动主题、拟定时间地点、所属单位、个人分工及支持需求；不要填写私人联系方式。所有活动均需审核，host/cohost/sponsor 申请须社区确认。发布后有机会由运营精选至首页社区动态，非自动展示。','Only verified committee or partner representatives may submit. Include the topic, proposed date and venue, organization, your role and support requested; omit private contact details. Every event and host/cohost/sponsor request requires review. Published events may be editorially selected for homepage news; selection is not automatic.')+(canEvent?'':t(' 你目前没有代表权限。',' You do not currently have representative access.')):review?t('此板块的帖子审核通过后公开。','Posts in this category are published after review.'):t('此板块的帖子提交后直接公开。','Posts in this category are published immediately.');};
       compose.elements.category.onchange=updatePolicy;updatePolicy();
-      let offset=20;
-      document.querySelector('#more-posts').onclick=e=>act(e.currentTarget,async()=>{const {data,error}=await client.rpc('community_member_feed',{page_offset:offset});if(error)throw error;if(!current())return;offset+=data.length;document.querySelector('#feed').insertAdjacentHTML('beforeend',data.map(post).join(''));listLinks(content);e.target.hidden=data.length<20;});
+      let offset=feed.data.length;
+      document.querySelector('#more-posts').onclick=e=>act(e.currentTarget,async()=>{const {data,error}=await client.rpc('community_member_feed',feedArgs(offset));if(error)throw error;if(!current())return;offset+=data.length;document.querySelector('#feed').insertAdjacentHTML('beforeend',data.map(post).join(''));listLinks(content);e.target.hidden=data.length<20;});
       document.querySelector('#post-form').onsubmit=e=>{e.preventDefault();const form=e.currentTarget;const f=new FormData(form);act(form.querySelector('button'),async()=>{
         const event=f.get('category')==='event';
         const {data:postId,error}=await client.rpc(event?'submit_community_event':'submit_community_post',{post_title:f.get('title').trim(),post_body:f.get('body').trim(),...(event?{event_role:f.get('event_role')}:{post_category:f.get('category')})});if(error)throw error;
