@@ -1,0 +1,22 @@
+/* Text remains the identifier: colour is a secondary cue, never a permission. */
+body .post-author .badge-tag[data-badge-id]{
+ --tag-bg:#eef2f5;--tag-ink:#405469;--tag-line:#c7d3dd;
+ background:var(--tag-bg);color:var(--tag-ink);border:1px solid var(--tag-line);
+ font-weight:600;box-shadow:none;
+}
+body .post-author .badge-tag[data-badge-id="L0"]{--tag-bg:#ecf8ef;--tag-ink:#30663e;--tag-line:#b6d9c0}
+body .post-author .badge-tag[data-badge-id="L1"]{--tag-bg:#e8f6f3;--tag-ink:#24665b;--tag-line:#afd6cc}
+body .post-author .badge-tag[data-badge-id="L2"]{--tag-bg:#edf1ff;--tag-ink:#45568b;--tag-line:#c1caeb}
+body .post-author .badge-tag[data-badge-id="L3"]{--tag-bg:#f2eafb;--tag-ink:#724990;--tag-line:#d5bde7}
+body .post-author .badge-tag[data-badge-id="L4"]{--tag-bg:#e7f3ff;--tag-ink:#285d8d;--tag-line:#b7d2ed}
+body .post-author .badge-tag[data-badge-id="L5"]{--tag-bg:#fff3d7;--tag-ink:#795817;--tag-line:#e2cc95}
+body .post-author .badge-tag[data-badge-id^="T"]{--tag-bg:#eef5df;--tag-ink:#4c6621;--tag-line:#c8d7a6}
+body .post-author .badge-tag[data-badge-id^="C"]{--tag-bg:#fff0df;--tag-ink:#855323;--tag-line:#e5c59f}
+body .post-author .badge-tag[data-badge-id^="O"]{--tag-bg:#ffece5;--tag-ink:#954c37;--tag-line:#e7beaf}
+body .post-author .badge-tag[data-badge-id^="M"]{--tag-bg:#e9effb;--tag-ink:#465d8c;--tag-line:#c1cde7}
+body .post-author .badge-tag[data-badge-id^="A"]{--tag-bg:#fbeaf2;--tag-ink:#8c4267;--tag-line:#e5bad0}
+body .post-author .badge-tag[data-badge-id="campus"]{--tag-bg:#f1eafb;--tag-ink:#714895;--tag-line:#d1bde6}
+body .post-author .badge-tag[data-badge-id="committee_member"]{--tag-bg:#eaf0fc;--tag-ink:#3f5e91;--tag-line:#bacbed}
+body .post-author .badge-tag[data-badge-id="committee_representative"]{--tag-bg:#fff2cc;--tag-ink:#795416;--tag-line:#e5ca83}
+body .post-author .badge-tag[data-badge-id="partner_member"]{--tag-bg:#e1f4ee;--tag-ink:#286955;--tag-line:#a9d6c5}
+body .post-author .badge-tag[data-badge-id="partner_representative"]{--tag-bg:#ffe8e0;--tag-ink:#944b39;--tag-line:#e7b7a7}

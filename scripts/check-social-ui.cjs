@@ -6,9 +6,10 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright'),assert=req
  const post={id:'post-a',title:'量子读书会的小发现',body:'欢迎分享你的思考。',category:'help',status:'published',published_at:'2026-10-12',author_name:'林小满',author_profile_id:'public-other',badges:[{id:'L1',name:'开箱猫'}],can_reply:true};
  window.supabase={createClient:()=>({auth:{getSession:async()=>({data:{session:{user:{id:'private-reader',email:'private@example.invalid'}}}}),onAuthStateChange:()=>({})},from:()=>{const q={select:()=>q,eq:()=>q,order:()=>q,limit:()=>q,single:async()=>({data:{display_name:'我的昵称',bio:'我的介绍',points:0}}),then:(a,b)=>Promise.resolve({data:[],error:null}).then(a,b)};return q;},rpc:async(name,args)=>{
  qa.calls.push({name,args});
+ const identityBadges=[{id:'L0',name:'好奇猫'},{id:'committee_member',name:'委员单位成员'},{id:'committee_representative',name:'委员单位代表'},{id:'partner_member',name:'共建单位成员'},{id:'partner_representative',name:'共建单位代表'}];post.badges=identityBadges;
  if(name==='community_member_feed')return {data:[post]};
  if(name==='community_member_post_detail')return {data:post};
- if(name==='community_member_replies')return {data:[{id:'reply-a',body:'谢谢分享',author_name:'另一位伙伴',author_profile_id:'public-replier',published_at:'2026-10-12',badges:[]}]};
+ if(name==='community_member_replies')return {data:[{id:'reply-a',body:'谢谢分享',author_name:'另一位伙伴',author_profile_id:'public-replier',published_at:'2026-10-12',badges:identityBadges}]};
  if(name==='community_member_profile'){if(args.member_id==='missing')return {data:null};const own=!args.member_id||args.member_id==='public-me';return {data:{id:own?'public-me':args.member_id,display_name:own?'我的昵称':'林小满',bio:'<img src=x onerror=alert(1)> 对量子充满好奇。',is_self:own,following_count:3,follower_count:qa.following?6:5,is_following:qa.following,badges:[{id:'L1',name:'开箱猫'},{id:'L0',name:'好奇猫'}]}};}
  if(name==='set_member_follow'){if(qa.fail)return {error:{code:'42501'}};qa.following=args.following;return {data:qa.following};}
  if(name==='community_member_posts')return {data:args.page_offset?[]:[post]};
@@ -17,7 +18,9 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright'),assert=req
  return {data:false,error:null};
  }})};`}));
  const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto('http://127.0.0.1:8765/account.html#forum');await page.locator('.post-author a').click();await page.locator('.visitor-hero').waitFor();
+ await page.goto('http://127.0.0.1:8765/account.html#forum');await page.locator('.post-author a').waitFor();
+ const tagColors=await page.locator('.post-author .badge-tag').evaluateAll(es=>es.map(e=>getComputedStyle(e).backgroundColor));assert.equal(new Set(tagColors).size,5,'identity badges have distinct colours');
+ await page.locator('.post-author a').click();await page.locator('.visitor-hero').waitFor();
  assert.equal(await page.locator('.social-counts a[href^="#connections"]').count(),0);assert.equal(await page.locator('.visitor-badges .earned').count(),2);assert.equal(await page.locator('.desk-tools,.explore-deck').count(),0);
  assert.equal(await page.locator('.profile-bio img').count(),0);assert.equal(await page.getByText('private@example.invalid').count(),0);
  await page.evaluate(()=>qa.fail=true);await page.locator('.follow-button').click();await page.getByText('操作未完成，请重试。',{exact:true}).waitFor();assert.equal(await page.locator('.follow-button').getAttribute('aria-pressed'),'false');
