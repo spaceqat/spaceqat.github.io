@@ -22,7 +22,7 @@ const assert=require('node:assert/strict');
  signInWithPassword:async args=>{calls.push(['login',args]);current={user:member};return {data:current,error:null}},
  resetPasswordForEmail:async()=>{calls.push(['reset']);return {error:null}},resend:async()=>{calls.push(['resend']);return {error:null}},
  updateUser:async()=>{calls.push(['password']);return {error:null}},signOut:async()=>{current=null;return {error:null}}
- },from:()=>({select:()=>({eq:()=>({single:async()=>({data:{display_name:'Test member',bio:'',points:0},error:null})})}),update:args=>({eq:async()=>{calls.push(['profile',args]);return {error:null}}})})})};` }));
+ },from:()=>({select:()=>({eq:()=>({single:async()=>location.search.includes('profile_missing=1')?{data:null,error:{code:'PGRST205'}}:{data:{display_name:'Test member',bio:'',points:0},error:null}})}),update:args=>({eq:async()=>{calls.push(['profile',args]);return {error:null}}})})})};` }));
  await page.goto('http://127.0.0.1:8765/account.html#signup');
  await page.reload();
  await page.locator('[name=name]').fill('测试会员');await page.locator('[name=email]').fill('test@example.invalid');await page.locator('[name=password]').fill('Test-password-123');await page.locator('#auth button').click();
@@ -41,6 +41,11 @@ const assert=require('node:assert/strict');
  await page.locator('[name=password]').fill('New-password-123');await page.locator('[name=confirm]').fill('Other-password-123');await page.locator('#auth button').click();await page.getByText('两次密码不一致。',{exact:true}).waitFor();
  await page.locator('[name=confirm]').fill('New-password-123');await page.locator('#auth button').click();await page.getByText('密码已更新，请重新登录。',{exact:true}).waitFor();
  assert.equal(await page.evaluate(()=>calls.filter(c=>c[0]==='password').length),1);
+ await page.goto('http://127.0.0.1:8765/account.html?profile_missing=1#login');
+ await page.getByRole('heading',{name:'欢迎回来'}).waitFor();
+ await page.locator('[name=email]').fill('test@example.invalid');await page.locator('[name=password]').fill('Test-password-123');await page.locator('#auth button').click();
+ await page.getByText('会员档案尚未启用，管理员需要完成数据库初始化。账号已经创建，无需重复注册。').waitFor();
+ assert.equal(await page.getByText('正在读取资料…').count(),0);
  for(const lang of ['', '?lang=en'])for(const width of [1440,768,390,320]){
    await page.setViewportSize({width,height:950});await page.goto('http://127.0.0.1:8765/account.html'+lang+'#signup');await page.locator('#auth').waitFor();
    assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth), 'overflow '+lang+width);

@@ -33,7 +33,12 @@
       document.querySelector('#logout').onclick=logout;
       const {data,error}=await client.from('member_profiles').select('display_name,bio,points').eq('id',user.id).single();
       if(ticket!==revision)return;
-      if(error){say(t('已登录，但会员资料尚未就绪。请先执行数据库初始化脚本，完成后刷新。','Signed in, but your profile is not ready. Please complete database setup and reload.'),true);return;}
+      if(error){
+        const missing=error.code==='PGRST205';
+        content.innerHTML=`<h2>${t('账号已登录','Signed in')}</h2><p class="email">${escape(user.email)}</p><p>${missing?t('会员档案尚未启用，管理员需要完成数据库初始化。账号已经创建，无需重复注册。','Member profiles are not yet enabled. An administrator needs to initialize the database. Your account is created; do not sign up again.'):t('暂时无法读取会员档案，请稍后刷新重试。','Unable to load your profile right now. Please try refreshing later.')}</p><button id="logout">${t('退出登录','Sign out')}</button>`;
+        document.querySelector('#logout').onclick=logout;
+        return;
+      }
       content.innerHTML=`<h2>${t('我的会员资料','My profile')}</h2><p class="email">${escape(user.email)}</p><form id="profile">${field('display_name',t('用户名','Display name'),'text',`maxlength="40" value="${escape(data.display_name)}"`)}<label>${t('个人介绍','Bio')}<textarea name="bio" maxlength="500">${escape(data.bio)}</textarea></label><button>${t('保存资料','Save profile')}</button></form><div class="stats">${t('贡献积分','Contribution points')}: ${Number(data.points)||0}<br>${t('徽章与论坛尚未接入；此处不展示 Demo 的示例奖励。','Badges and forum are not connected yet. Demo rewards are not used here.')}</div><button class="secondary" id="logout">${t('退出登录','Sign out')}</button>`;
       document.querySelector('#logout').onclick=logout;
       document.querySelector('#profile').onsubmit=e=>run(e,async f=>{const name=f.get('display_name').trim();if(!name)throw new Error('name');const {error}=await client.from('member_profiles').update({display_name:name,bio:f.get('bio').trim()}).eq('id',user.id);if(error)throw error;say(t('资料已保存。','Profile saved.'));});
