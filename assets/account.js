@@ -21,6 +21,7 @@
   tabs.innerHTML=`<p class="sidebar-label">YOUR OPEN SPACE</p>`+[['profile',t('我的空间','My space')],['badges',t('徽章收藏','Badges')],['forum',t('社区论坛','Forum')],['submissions',t('我的投稿','My posts')]].map(([id,label],i)=>`<a href="#${id}"><span>${['◇','♧','☷','↗'][i]} ${label}</span><small>0${i+1}</small></a>`).join('')+`<div class="sidebar-note"><span>✦</span><p>${t('每一份贡献，<br>都值得被看见。','Every contribution<br>deserves to be seen.')}</p><small>${t('开放每一面，<br>叠加无限可能。','Open every side.<br>Explore every possibility.')}</small></div>`;
   document.querySelector('main').before(tabs);
   const campusLink=document.createElement('a');campusLink.href='#campus-apply';campusLink.textContent=t('✧ 校园大使申请','✧ Campus ambassador');tabs.querySelector('.sidebar-note').before(campusLink);
+  const campusDirectory=document.createElement('a');campusDirectory.href='campus.html'+(en?'?lang=en':'');campusDirectory.textContent=t('⌂ 校园空间','⌂ Campus spaces');tabs.querySelector('.sidebar-note').before(campusDirectory);
   const contributionLink=document.createElement('a');contributionLink.href='#contributions';contributionLink.innerHTML=`<span>⌘ ${t('开源贡献','Contributions')}</span><small>05</small>`;tabs.querySelector('.sidebar-note').before(contributionLink);
   async function refreshStaffNavigation(ticket){
     for(const a of tabs.querySelectorAll('[data-staff]'))a.remove();
