@@ -68,6 +68,19 @@
 - 维护清单后运行 `python3 scripts/build_partners.py` 更新首页伙伴区，再一起提交。伙伴区为静态 HTML，关闭 JavaScript 仍可阅读。
 - Logo 保持官方颜色和比例。白字品牌使用深色底，其余使用浅色底。机构名称始终可读，文字卡片不是自行设计的品牌 Logo。
 
+## 校园空间外观工作台
+
+入口为 `campus.html#mine` → 进入所属校园 →「编辑校园空间」。只有本校有效任期内的校园大使及社区管理员可以编辑；访客只能看到已审核版本。
+
+- 外观支持鼠尾草绿 / 晴空蓝 / 暖杏色、横幅 / 明信片两种封面排版、黑体 / 宋体标题。
+- 封面支持上传、横纵取景位置调整、无障碍描述；相册最多 8 张，支持排序、说明和移除。介绍、动态、资料、相册四个正文模块可排序或隐藏；团队和联系方式保留。
+- 图片与文字、外观一起保存为草稿并提交审核。保存或上传不自动更新公开页面；管理员通过后才替换公开快照。
+- 上线前：确认已执行 `018_campus_spaces.sql`、`019_campus_welcome.sql`，然后在 Supabase SQL Editor 执行 `supabase/020_campus_design.sql` 一次，再发布对应前端文件。旧的文字草稿仍兼容；未执行 020 时，新工作台无法保存外观或上传图片。
+- 020 新建 **私有** `campus-media` bucket，请勿改为 public。浏览器将 JPG / PNG / WebP 重编码为 WebP，原图限制 8 MB / 4000 万像素，服务端限制单张 2 MiB、WebP；最大长边封面 1920px、相册 1400px。服务端校验路径归属、模块白名单与相册数量，不接受自定义 HTML / CSS / JS。
+- 每次上传使用新的 UUID 文件名，禁止客户端覆盖或删除存储对象，防止绕过审核修改公开图片。页面里「移除」仅修改草稿；被移除文件和放弃的上传留在私有存储，由管理员定期核对草稿、公开快照和历史记录后，经 Storage 控制台/API 清理，不直接删除 `storage.objects` 行。
+- 图片只向有编辑权限者或当前公开快照的访客签发链接。前端使用 60 秒签名链接，已签发链接在有效期内仍可能访问，已经下载的副本不能撤回。不要上传身份证、申请表等私密材料。参考 [Supabase 私有存储](https://supabase.com/docs/guides/storage/buckets/fundamentals) 与 [签名链接接口](https://supabase.com/docs/reference/javascript/storage-from-createsignedurl)。
+- 本地检查：`node scripts/check-campus-spaces-db.cjs`（PGlite：权限、私有图片、跨校拒绝、审核隔离、字段限制）及 `node scripts/check-campus-spaces-ui.cjs`（Playwright / Edge：模拟上传、失败保留、取景、排序、预览、手机布局）。测试不连接真实账号，也不修改线上校园。
+
 ## 本地预览
 
 无需安装依赖或编译。因动态清单通过 HTTP 读取，请在仓库目录启动一个本地静态服务器：
