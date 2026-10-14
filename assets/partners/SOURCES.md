@@ -36,7 +36,7 @@
 | 华大生命科学研究院 | `bgi-research.png` | https://research.genomics.cn/ | https://research.genomics.cn/public/img/logo-blue.png?v=1 | 官网标识，原样下载。 |
 | 国盾量子 | `quantumctek.png` | https://www.quantum-info.com/ | 用户提供 | 用户提供的新版机构标识；由 JPEG 转换为 PNG，以保持现有资源路径不变。 |
 | 伏曦量子 | `fuxi.png` |  | 用户提供 | 用户提供的机构标识；保持完整画面比例，等比缩放为适合网页加载的尺寸。 |
-| 工商银行软件开发中心 | `icbc.jpg` | https://www.icbc-ltd.com/ | 用户提供 | 使用用户提供的中国工商银行标识，原样保存，保留品牌颜色与比例。 |
+| 中国工商银行软件开发中心 | `icbc-software-center.jpg` | https://www.icbc-ltd.com/ | 用户提供（2026-10-15） | 使用用户提供的含“软件开发中心”字样的完整 Logo，原样保存；页面适配白边，保留品牌颜色与比例。旧 `icbc.jpg` 不再用于伙伴卡片。 |
 
 ## 用户确认的机构标识
 

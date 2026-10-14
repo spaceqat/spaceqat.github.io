@@ -28,6 +28,8 @@
 .partner-logo-image img[src$="ferroq-lab.jpg"]{width:100%;height:100%;max-height:none;object-fit:cover;object-position:center}
 .partner-logo-image:has(img[src$="lianggan-intelligence.jpg"]){height:100px}
 .partner-logo-image img[src$="lianggan-intelligence.jpg"]{height:100px;max-height:100px}
+.partner-logo-image:has(img[src$="icbc-software-center.jpg"]){height:110px;overflow:hidden;background:#fff}
+.partner-logo-image img[src$="icbc-software-center.jpg"]{width:100%;height:110px;max-height:none;object-fit:cover;object-position:center;mix-blend-mode:normal}
 .ai-note{grid-template-columns:minmax(0,1fr) 260px;gap:40px;padding:40px 48px;min-height:270px;border:1px solid #a0ecee40;border-radius:22px;background:radial-gradient(ellipse at 100% 50%,#19475066,transparent 65%),#0b1a27;overflow:hidden}
 .foundation-copy>.eyebrow{display:block;color:var(--cyan);font:500 18px/1.6 var(--font-body);letter-spacing:.06em;margin-bottom:12px}
 .ai-note h3{font-size:clamp(30px,3vw,42px);margin-bottom:14px}
