@@ -1,0 +1,24 @@
+const {PGlite}=require(process.env.PGLITE_MODULE||'@electric-sql/pglite'),fs=require('node:fs'),assert=require('node:assert/strict');
+(async()=>{const db=new PGlite();try{
+ await db.exec(`create role anon;create role authenticated;create role service_role bypassrls;create schema auth;
+ create table auth.users(id uuid primary key,email text,raw_user_meta_data jsonb);create table auth.identities(user_id uuid,provider text,provider_id text,identity_data jsonb);
+ create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
+ grant usage on schema public,auth to anon,authenticated;`);
+ for(const n of ['001_members','002_community','003_category_publication','004_github_contributions','007_participation_agreement','008_organization_events','009_identity_verification_wording','010_forum_replies','011_thread_details_deletion','012_immediate_replies','013_member_social','016_forum_boards','017_campus_applications','018_campus_spaces'])await db.exec(fs.readFileSync('supabase/'+n+'.sql','utf8'));
+ const id=n=>'00000000-0000-0000-0000-'+String(n).padStart(12,'0'),[admin,a,b]=[1,2,3].map(id);
+ for(const uid of [admin,a,b])await db.query('insert into auth.users values($1,$2,$3)',[uid,'private@example.invalid','{"display_name":"Nickname"}']);await db.query("insert into member_roles values($1,'admin')",[admin]);
+ const as=async(uid,role='authenticated')=>{await db.exec('reset role');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[uid||'']);await db.exec('set role '+role)};
+ const rpc=async(sql,args=[])=> (await db.query(sql,args)).rows[0]?.v;
+ await as(admin);const policy=await rpc('select campus_publish_policy($1,true) v',[{operator:'QA',contact:'test@example.invalid',audience:'Adults',min_age:18,term_months:12,activity:'Test activity',retention:'Test retention',code:'Reviewed code '.repeat(20),privacy:'Reviewed privacy '.repeat(20),reviewed:true}]);
+ const apply=async(n)=>{await as(a);await db.query('select campus_save_application($1,$2,$3,true,true,true,0,$4)',[id(n),{name:'PRIVATE NAME',age:'20',school:'Example U',department:'Science',major:'Physics',degree:'undergraduate',grade:'Year 2',graduation:'2030',email:'private@example.invalid',interests:'Quantum',motivation:'Learn',first_action:'Read together',directions:'Campus',hours:'4',signature:'PRIVATE NAME'},policy,id(n+100)]);await as(admin);await db.query("select campus_review_at_school($1,'approved','Verified','Example University')",[id(n)]);};
+ await apply(10);await db.exec('reset role');await db.exec(fs.readFileSync('supabase/019_campus_welcome.sql','utf8'));
+ await as(a);const first=await rpc('select my_campus_welcome() v');assert.equal(first.name,'PRIVATE NAME');assert.equal(first.school,'Example University');assert.equal(first.read_at,null);assert.equal(first.status,'active');assert.ok(first.space_id);assert.ok(!JSON.stringify(first).includes('private@example'));
+ await as(b);assert.equal(await rpc('select my_campus_welcome() v'),null);await assert.rejects(db.query('select read_campus_welcome($1)',[first.id]));assert.equal((await db.query('select * from campus_appointments')).rows.length,0);
+ await as(admin);await assert.rejects(db.query('select read_campus_welcome($1)',[first.id]));await as(null,'anon');await assert.rejects(db.query('select my_campus_welcome()'));await assert.rejects(db.query('select read_campus_welcome($1)',[first.id]));
+ await as(a);const stamp=await rpc('select read_campus_welcome($1) v',[first.id]);assert.ok(stamp);assert.equal(String(await rpc('select read_campus_welcome($1) v',[first.id])),String(stamp));await assert.rejects(db.query("update campus_appointments set notice_read_at=null"));
+ await as(b);await as(a);assert.ok((await rpc('select my_campus_welcome() v')).read_at);
+ await as(admin);await db.query("select campus_identity_status($1,'paused','Paused')",[first.id]);await as(a);assert.equal((await rpc('select my_campus_welcome() v')).status,'paused');
+ await db.exec('reset role');await db.query("update campus_appointments set ends_at=now()-interval '1 day' where id=$1",[first.id]);await as(a);assert.equal((await rpc('select my_campus_welcome() v')).status,'expired');
+ await apply(11);await as(a);const renewed=await rpc('select my_campus_welcome() v');assert.notEqual(renewed.id,first.id);assert.equal(renewed.read_at,null);assert.equal(renewed.status,'active');
+ console.log('PASS: historical and new appointments, private own-only notice, canonical school, anon/admin cannot mark others read, idempotent durable receipts, paused/expired statuses, renewal generates independent unread notice.');
+}finally{await db.close()}})().catch(e=>{console.error(e);process.exit(1)});

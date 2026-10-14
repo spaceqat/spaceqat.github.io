@@ -114,5 +114,6 @@ window.decorateSpaceQatCampus=async({client,user,content,t,current})=>{
  if(appointment?.status==='active'&&new Date(appointment.ends_at)>new Date()){
   const work=document.createElement('a');work.href='campus.html'+(document.documentElement.lang==='en'?'?lang=en':'')+'#mine';work.className='dashboard-action';work.textContent=t('进入我的校园工作台 ↗','Open my campus workspace ↗');link.after(work);
  }
+ if(current())await window.mountCampusWelcome?.({client,content,t,current});
  }catch{/* The ordinary member home remains available if enrollment is not deployed. */}
 };
