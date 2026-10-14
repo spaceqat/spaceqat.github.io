@@ -20,6 +20,7 @@
   const tabs=document.createElement('nav');tabs.className='member-tabs';tabs.hidden=true;tabs.setAttribute('aria-label',t('个人空间导航','Personal space navigation'));
   tabs.innerHTML=`<p class="sidebar-label">YOUR OPEN SPACE</p>`+[['profile',t('我的空间','My space')],['badges',t('徽章收藏','Badges')],['forum',t('社区论坛','Forum')],['submissions',t('我的投稿','My posts')]].map(([id,label],i)=>`<a href="#${id}"><span>${['◇','♧','☷','↗'][i]} ${label}</span><small>0${i+1}</small></a>`).join('')+`<div class="sidebar-note"><span>✦</span><p>${t('每一份贡献，<br>都值得被看见。','Every contribution<br>deserves to be seen.')}</p><small>${t('开放每一面，<br>叠加无限可能。','Open every side.<br>Explore every possibility.')}</small></div>`;
   document.querySelector('main').before(tabs);
+  const campusLink=document.createElement('a');campusLink.href='#campus-apply';campusLink.textContent=t('✧ 校园大使申请','✧ Campus ambassador');tabs.querySelector('.sidebar-note').before(campusLink);
   const contributionLink=document.createElement('a');contributionLink.href='#contributions';contributionLink.innerHTML=`<span>⌘ ${t('开源贡献','Contributions')}</span><small>05</small>`;tabs.querySelector('.sidebar-note').before(contributionLink);
   async function refreshStaffNavigation(ticket){
     for(const a of tabs.querySelectorAll('[data-staff]'))a.remove();
@@ -29,6 +30,7 @@
       let p=permissions.data;
       if(permissions.error){const legacy=await client.rpc('community_can_review');p={forum:legacy.data===true};}
       if(ticket!==revision)return;
+      if(p?.admin){const a=document.createElement('a');a.dataset.staff='admin';a.href='#campus-review';a.textContent=t('▦ 校园大使审核','▦ Campus applications');tabs.querySelector('.sidebar-note').before(a);}
       for(const [flag,hash,label] of [['forum','moderation',t('论坛审核台','Forum review')],['contributions','contribution-review',t('贡献审核台','Contribution review')],['admin','admin',t('社区管理台','Administration')],['admin','mini-grant-review',t('迷你基金申请','Mini grant applications')]]){
         if(!p?.[flag])continue;const a=document.createElement('a');a.dataset.staff=flag;a.href='#'+hash;a.textContent='▦ '+label;a.setAttribute('aria-current',location.hash===a.hash?'page':'false');tabs.querySelector('.sidebar-note').before(a);
       }
@@ -54,6 +56,7 @@
     document.querySelector('#language').href=(en?'account.html':'account.html?lang=en')+(['member','connections','forum'].includes(view)?location.hash:'');
     for(const a of tabs.querySelectorAll('a'))a.setAttribute('aria-current',a.hash==='#'+activeView?'page':'false');
     if(user&&!recovery&&view==='agreement'){await window.spaceqatAgreement.render({client,content,t,current:()=>ticket===revision});return;}
+    if(!recovery&&(view==='campus-verify'||(user&&['campus-apply','campus-review'].includes(view)))){for(const a of tabs.querySelectorAll('a'))a.setAttribute('aria-current',a.hash==='#'+view?'page':'false');await window.renderSpaceQatCampus({client,user,view,content,t,escape,current:()=>ticket===revision});return;}
     if(user&&!recovery&&['mini-grant','mini-grant-review'].includes(view)){await window.renderSpaceQatGrants({client,user,view,content,t,escape,current:()=>ticket===revision});return;}
     if(user&&!recovery&&view==='security'){await window.renderSpaceQatSecurity({client,user,content,t,escape,current:()=>ticket===revision,onUserUpdate:updated=>{if(ticket===revision&&updated.id===user?.id)user=updated;}});return;}
     if(user&&!recovery&&['member','connections'].includes(view)){await window.renderSpaceQatSocial({client,view,content,t,escape,current:()=>ticket===revision});return;}
@@ -80,8 +83,10 @@
       document.querySelector('#profile').onsubmit=e=>run(e,async f=>{const name=f.get('display_name').trim();if(!name)throw new Error('name');const {error}=await client.from('member_profiles').update({display_name:name,bio:f.get('bio').trim()}).eq('id',user.id);if(error)throw error;say(t('资料已保存。','Profile saved.'));});
       await window.decorateSpaceQatProfile({client,user,data,content,t,escape,current:()=>ticket===revision});
       if(ticket===revision)window.mountSpaceQatAvatar?.({client,user,data,content,t,current:()=>ticket===revision});
+      if(ticket===revision){const entry=document.createElement('section');entry.className='dashboard-card';entry.innerHTML=`<h2>${t('把好奇心带到校园','Bring curiosity to campus')}</h2><p>${t('申请成为量立方校园大使：填写资料、阅读守则并签署，等待社区审核。','Apply to become a SpaceQat campus ambassador: complete your details, read and sign the code, then await review.')}</p><a href="#campus-apply">${t('申请校园大使 ↗','Apply as a campus ambassador ↗')}</a>`;content.querySelector('.profile-hero')?.after(entry);}
       if(ticket===revision){const security=document.createElement('a');security.href='#security';security.className='dashboard-action';security.textContent=t('账号安全 · 更换邮箱 ↗','Account security · Change email ↗');content.querySelector('.dashboard-signout')?.prepend(security);content.querySelector('#profile-editor .email')?.after(security.cloneNode(true));}
       if(ticket===revision)await window.decorateSpaceQatSocial({client,content,t,current:()=>ticket===revision});
+      if(ticket===revision)void window.decorateSpaceQatCampus?.({client,user,content,t,current:()=>ticket===revision});
       return;
     }
     const mode=recovery&&user?'password':(['signup','forgot','resend'].includes(location.hash.slice(1))?location.hash.slice(1):'login');
