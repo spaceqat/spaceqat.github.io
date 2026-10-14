@@ -17,6 +17,11 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright'),assert=req
  return {data:null,error:null};}})};
  `}));
  const page=await context.newPage(),errors=[];page.on('pageerror',e=>{errors.push(e.message);console.error('Browser:',e.message)});
+ await page.goto(base+'/account.html#profile');await page.locator('#content a[href="#campus-apply"]').waitFor();
+ assert.equal(await page.locator('.member-tabs a[href="#campus-apply"]').count(),0);
+ assert.deepEqual(await page.locator('.member-tabs>a small').allTextContents(),['01','02','03','04','05','06']);
+ assert.equal(await page.locator('.member-tabs>a').nth(5).getAttribute('href'),'campus.html');
+ await page.locator('#content a[href="#campus-apply"]').click();await page.getByText('申请暂未开放',{exact:true}).waitFor();assert.equal(await page.locator('.member-tabs a[href="#profile"]').getAttribute('aria-current'),'page');
  await page.goto(base+'/account.html#campus-apply');try{await page.getByText('申请暂未开放',{exact:true}).waitFor({timeout:5000});}catch(e){console.error(await page.locator('body').innerText());throw e;}assert.equal(await page.locator('#campus-application-form').count(),0);
  await page.evaluate(()=>qa.open=true);await page.evaluate(()=>dispatchEvent(new HashChangeEvent('hashchange')));await page.locator('#campus-application-form').waitFor();
  assert.equal(await page.locator('[name=privacy-accept]').isChecked(),false);assert.equal(await page.locator('[name=code-accept]').isChecked(),false);
@@ -42,5 +47,6 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright'),assert=req
  await policyForm.locator('[name=open]').check();await page.evaluate(()=>{qa.policyError=null;qa.policyDelay=300});const previousCalls=await page.evaluate(()=>qa.calls.filter(c=>c.name==='campus_publish_policy').length);await publish.click();await page.evaluate(()=>document.querySelector('#campus-policy-form').requestSubmit());await page.waitForFunction(()=>document.querySelector('#campus-policy-status')?.textContent.includes('申请已开放'));assert.equal(await page.evaluate(()=>qa.calls.filter(c=>c.name==='campus_publish_policy').length),previousCalls+1);assert.equal(await page.locator('#campus-config details').first().getAttribute('open'),'');
  await page.evaluate(()=>{qa.admin=false;qa.apps[0].applicant_id='00000000-0000-0000-0000-000000000001';location.hash='campus-apply'});await page.locator('#campus-application-form').waitFor();assert.equal(await page.locator('[name=privacy-accept]').isChecked(),false);
  await page.evaluate(()=>location.hash='campus-verify/00000000-0000-0000-0000-000000000010');await page.getByText('已到期',{exact:true}).waitFor();assert.equal(await page.getByText('林小满',{exact:true}).count(),0);
- assert.deepEqual(errors,[]);console.log('PASS: closed enrollment, consent before draft, reload draft, 4 steps, both confirmations, 4 responsive widths, admin supplement once, policy review, private verification. Screenshots in temp.');
+ await page.goto(base+'/account.html?lang=en#profile');await page.locator('#content a[href="#campus-apply"]').waitFor();assert.equal(await page.locator('.member-tabs a[href="#campus-apply"]').count(),0);assert.equal(await page.locator('.member-tabs>a').nth(5).getAttribute('href'),'campus.html?lang=en');assert.match(await page.locator('.member-tabs>a').nth(5).innerText(),/Campus spaces/);assert.equal(await page.locator('.member-tabs>a').nth(5).locator('small').innerText(),'06');
+ assert.deepEqual(errors,[]);console.log('PASS: bilingual sidebar 01–06 and profile-only application entry, closed enrollment, consent before draft, reload draft, 4 steps, both confirmations, 4 responsive widths, admin supplement once, policy review, private verification. Screenshots in temp.');
 }finally{await browser.close();server.close()}})().catch(e=>{console.error(e);process.exit(1)});
