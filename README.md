@@ -120,6 +120,8 @@ python3 -m http.server 8000
 
 ### 《开箱：太空量子猫猫局》静态试玩版
 
+2026-11-03 已应用 `kaixiang-mist-update-2026-11-03.zip` 的静态页面：九人/十人局、迷雾猫与训练、组会后冷却更新。原始 HTML 的 SHA256 已核验。后续部署联机必须使用同包 `server.mjs` 成套部署，不能使用 2026-11-02 旧服务端；当前官网不运行联机服务。
+
 访问 `/kaixiang/`，中英文游戏列表均有独立卡片。来源：`spaceqat-kaixiang-2026-11-02.zip` 中的 `kaixiang.html`，发布为 `kaixiang/index.html`；添加 UTF-8、移动端 viewport 和网页标题。网页与游戏内标题统一为“开箱：太空量子猫猫局”。封面为生成的太空猫猫主题插画（assets/kaixiang-cover.png）。
 
 遵循交付说明第七节，仅上线单机与训练。GitHub Pages 不能运行多人房间服务，卡片已标注联机暂未开放。不要上传完整 ZIP、`server.mjs`、systemd 或 Nginx 配置。后续多人版需要另行部署 Node 服务与 HTTPS/WebSocket，完成双客户端验收后再更新入口。现有 `/game/` 和其存档不受影响。

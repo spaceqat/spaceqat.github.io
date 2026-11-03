@@ -11,11 +11,13 @@ const fs=require('node:fs'),http=require('node:http'),assert=require('node:asser
   assert.match(await page.title(),/太空量子猫猫局/);assert.ok((await page.evaluate(()=>drawnText)).some(t=>t.includes('登船短训练')));
   await page.mouse.click(1200,53);await page.waitForTimeout(400);
   assert.ok((await page.evaluate(()=>drawnText)).includes('开始航行'));
+  const menu=await page.evaluate(()=>drawnText.map(String));assert.ok(menu.includes('9')&&menu.includes('10'),'Nine and ten cat options');
   await page.screenshot({path:os.tmpdir()+'/kaixiang-menu.png'});
   await page.evaluate(()=>{drawnText=[]});await page.mouse.click(665,360);await page.waitForTimeout(300);
   assert.ok(!(await page.evaluate(()=>drawnText.join(' '))).includes('Claude'),'Obsolete preview notice removed');
   await page.screenshot({path:os.tmpdir()+'/kaixiang-network.png'});
   await page.mouse.click(540,360);await page.waitForTimeout(200);
+  await page.mouse.click(850,445);
   await page.mouse.click(590,510);await page.evaluate(()=>{drawnText=[]});await page.mouse.click(580,760);await page.waitForTimeout(800);
   assert.ok((await page.evaluate(()=>drawnText)).length>10,'Solo game renders');
   await page.keyboard.press('d');await page.screenshot({path:os.tmpdir()+'/kaixiang-solo.png'});
