@@ -120,6 +120,8 @@ python3 -m http.server 8000
 
 ### 《开箱：太空量子猫猫局》静态试玩版
 
+2026-11-04 聊天滚动补丁：应用 `kaixiang-chat-scroll-hotfix-2026-11-04.zip`，原始 HTML SHA256 `EBDF3C3BD5EFAA7CAFC0D2C8C83ECCF5AB62468C1B12C1E1B26ACD788F61E30D`。当前组会聊天支持滚轮/拖动、滚动条及回到最新；翻阅旧消息时保持位置，新组会重置。不提供跨组会档案。包含下述输送 HUD 修复，仅更新前端，无需更换服务端或清除浏览器数据。
+
 2026-11-04 已应用 `kaixiang-transit-hud-hotfix-2026-11-04.zip`，原始 HTML SHA256：`2EDEBB9CB3D2B50482B8962FDA36BADF7D00EBC2CE61FDCDF28A37BCE6E8D2CD`。修复退相干猫乘坐 AOD/离子输送线时 HUD 读取缺失动作而中断渲染的问题，输送时禁用相关按钮。基于 11 月 3 日隧穿版，仅更新前端，不需替换服务端或清除浏览器数据。
 
 2026-11-03 隧穿猫更新：已应用 `kaixiang-tunnel-update-2026-11-03.zip` 的静态 HTML（原始 SHA256 `2456C9EA70D44729FE5203D6D03660D26B5EA838B1242AAFF0B281AC3FEAFCAF`）。九人/十人局改为普通退相干猫＋隧穿猫，新增 G 随机隧穿与练习。此版本取代下述迷雾版本；未来联机必须使用隧穿更新包中的配套 `server.mjs`，不可混用旧服务端。网站名称、封面、UTF-8 和移动端 viewport 保留。
