@@ -120,6 +120,8 @@ python3 -m http.server 8000
 
 ### 《开箱：太空量子猫猫局》静态试玩版
 
+2026-11-03 隧穿猫更新：已应用 `kaixiang-tunnel-update-2026-11-03.zip` 的静态 HTML（原始 SHA256 `2456C9EA70D44729FE5203D6D03660D26B5EA838B1242AAFF0B281AC3FEAFCAF`）。九人/十人局改为普通退相干猫＋隧穿猫，新增 G 随机隧穿与练习。此版本取代下述迷雾版本；未来联机必须使用隧穿更新包中的配套 `server.mjs`，不可混用旧服务端。网站名称、封面、UTF-8 和移动端 viewport 保留。
+
 2026-11-03 已应用 `kaixiang-mist-update-2026-11-03.zip` 的静态页面：九人/十人局、迷雾猫与训练、组会后冷却更新。原始 HTML 的 SHA256 已核验。后续部署联机必须使用同包 `server.mjs` 成套部署，不能使用 2026-11-02 旧服务端；当前官网不运行联机服务。
 
 访问 `/kaixiang/`，中英文游戏列表均有独立卡片。来源：`spaceqat-kaixiang-2026-11-02.zip` 中的 `kaixiang.html`，发布为 `kaixiang/index.html`；添加 UTF-8、移动端 viewport 和网页标题。网页与游戏内标题统一为“开箱：太空量子猫猫局”。封面为生成的太空猫猫主题插画（assets/kaixiang-cover.png）。
