@@ -20,8 +20,8 @@ const fs=require('node:fs'),http=require('node:http'),assert=require('node:asser
   assert.ok(!(await page.evaluate(()=>drawnText.join(' '))).includes('Claude'),'Obsolete preview notice removed');
   await page.screenshot({path:os.tmpdir()+'/kaixiang-network.png'});
   await page.mouse.click(540,360);await page.waitForTimeout(200);
-  await page.mouse.click(850,445);
-  await page.mouse.click(590,510);await page.evaluate(()=>{drawnText=[]});await page.mouse.click(580,760);await page.waitForTimeout(800);
+  await page.mouse.click(850,490);
+  await page.mouse.click(590,555);await page.evaluate(()=>{drawnText=[]});await page.mouse.click(580,760);await page.waitForTimeout(800);
   assert.ok((await page.evaluate(()=>drawnText)).length>10,'Solo game renders');
   assert.equal(await page.evaluate(()=>localStorage.getItem('qcat.name')),'测试猫猫');
   await page.keyboard.press('d');await page.screenshot({path:os.tmpdir()+'/kaixiang-solo.png'});
