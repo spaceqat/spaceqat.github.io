@@ -20,6 +20,11 @@ const fs=require('node:fs'),http=require('node:http'),assert=require('node:asser
   await nameInput.fill('测试猫猫');assert.equal(await nameInput.getAttribute('maxlength'),'8');
   const menu=await page.evaluate(()=>drawnText.map(String));assert.ok(menu.includes('9')&&menu.includes('10'),'Nine and ten cat options');
   await page.screenshot({path:os.tmpdir()+'/kaixiang-menu.png'});
+  await page.evaluate(()=>{drawnText=[]});await page.mouse.click(1350,790);await page.waitForTimeout(150);
+  assert.ok((await page.evaluate(()=>drawnText)).includes('中文'),'English mode offers Chinese switch');
+  assert.ok(await page.locator('input').evaluateAll(es=>es.some(e=>e.value==='测试猫猫')),'Language switch preserves player nickname');
+  await page.screenshot({path:os.tmpdir()+'/kaixiang-english.png'});
+  await page.mouse.click(1350,790);await page.waitForTimeout(150);
   await page.evaluate(()=>{drawnText=[]});await page.mouse.click(665,360);await page.waitForTimeout(300);
   assert.equal(await page.getByPlaceholder('最多 8 个字',{exact:true}).inputValue(),'测试猫猫');
   assert.ok(!(await page.evaluate(()=>drawnText.join(' '))).includes('Claude'),'Obsolete preview notice removed');
