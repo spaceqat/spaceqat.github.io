@@ -12,6 +12,11 @@ const fs=require('node:fs'),http=require('node:http'),assert=require('node:asser
   await page.mouse.click(1200,53);await page.waitForTimeout(400);
   assert.ok((await page.evaluate(()=>drawnText)).includes('开始航行'));
   const nameInput=page.getByPlaceholder('输入名字，最多 8 个字');
+  for(const blocked of ['傻1逼','賭場']){
+   await nameInput.fill(blocked);await page.mouse.click(580,760);await page.waitForTimeout(100);
+   assert.ok(await nameInput.isVisible(),'Blocked nickname must stay on title screen');
+   assert.notEqual(await page.evaluate(()=>localStorage.getItem('qcat.name')),blocked);
+  }
   await nameInput.fill('测试猫猫');assert.equal(await nameInput.getAttribute('maxlength'),'8');
   const menu=await page.evaluate(()=>drawnText.map(String));assert.ok(menu.includes('9')&&menu.includes('10'),'Nine and ten cat options');
   await page.screenshot({path:os.tmpdir()+'/kaixiang-menu.png'});
