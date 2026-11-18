@@ -7,7 +7,7 @@ R.add('C7-1',[
  R.lab('执行采样，并读取计数。',{labKey:'code',codeStage:'execute',seed:['H'],measured:true,shots:100,explain:true,showCode:true,codeFirst:true,ok:m=>!!m.result,gh:'采样一次，观察 0 和 1 分别出现了多少次。'}),
  R.ask('如果输出中有「\'0\': 49」，它表示什么？',['概率幅是 49','测到 0 共 49 次','第 49 个量子比特'],1,'键是测量结果，值是次数。它不等于量子态的概率幅。'),
  R.lab('把 H 换成 X，计数会怎样变化？先在心里预测，再清空门、加入 X 并采样，留意代码同步改变。',{labKey:'code',seed:['H'],measured:true,edit:true,gates:['H','X'],showCode:true,codeFirst:true,explain:true,ok:m=>m.seq.join(',')==='X'&&!!m.result,gh:'只保留一个 X，再采样。'}),
- R.say('本节的计数来自网页内的模拟，网页并不运行上面展示的 FatQat Python 代码。有限次采样不一定恰好符合理论比例；真实设备还涉及实际的准备、控制与读出，增加采样次数不会自动消除设备误差。','想继续使用 FatQat，可以复制实验代码，在安装了 FatQat 的 Python 环境中运行。<a class="career-doc-link" href="https://fatqat.readthedocs.io/en/latest/guide/quickstart/" target="_blank" rel="noopener noreferrer">继续使用 FatQat：快速入门（新窗口）</a>'),
+ R.say('本节的计数来自网页内的模拟，网页并不运行上面展示的 FatQat Python 代码。有限次采样不一定恰好符合理论比例；真实设备还涉及实际的准备、控制与读出，增加采样次数不会自动消除设备误差。','想继续使用 FatQat，可以复制实验代码，在安装了 FatQat 的 Python 环境中运行。<a class="career-doc-link" href="https://fatqat.readthedocs.io/zh-cn/stable/guide/quickstart/" target="_blank" rel="noopener noreferrer">继续使用 FatQat：快速入门（新窗口）</a>'),
  R.end('你已经了解怎样用代码描述一个量子实验。让这样的程序在真实设备上运行，还需要哪些人的工作？')
 ]);
 R.add('C7-2',[

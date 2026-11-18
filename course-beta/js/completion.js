@@ -137,7 +137,7 @@ function showCourseCompletion(){
   <section class="completion-next" aria-labelledby="completion-next-title">
    <h2 id="completion-next-title">接下来</h2>
    <div class="completion-next-grid">
-    <a class="completion-next-item" href="https://fatqat.readthedocs.io/en/latest/guide/quickstart/" target="_blank" rel="noopener noreferrer"><strong>用 FatQat 继续实践</strong><span>在自己的电脑上运行第七章的量子程序</span></a>
+    <a class="completion-next-item" href="https://fatqat.readthedocs.io/zh-cn/stable/guide/quickstart/" target="_blank" rel="noopener noreferrer"><strong>用 FatQat 继续实践</strong><span>在自己的电脑上运行第七章的量子程序</span></a>
     <button type="button" class="completion-next-item" id="completion-back"><strong>回到课程地图</strong><span>任何一节都可以随时回来复习</span></button>
     <button type="button" class="completion-next-item" data-review-chapter="C1"><strong>从第一节重新开始</strong><span>带着新的理解再走一遍</span></button>
    </div>
