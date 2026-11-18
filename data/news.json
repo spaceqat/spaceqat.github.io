@@ -17,6 +17,23 @@
     "published": true
   },
   {
+    "id": "fatqat-0-1-0a3",
+    "title": "FatQat 0.1.0a3 版本发布",
+    "titleEn": "FatQat 0.1.0a3 Released",
+    "summary": "新增线性光学仿真，提升参数扫描与含噪仿真的性能，并扩展超导量子比特编译和测量功能。",
+    "summaryEn": "Adds linear optics simulation, speeds up parameter sweeps and noisy simulations, and expands superconducting compilation and measurement support.",
+    "category": "工具更新",
+    "categoryEn": "Tool Updates",
+    "date": "2026-11-16",
+    "url": "https://github.com/spaceqat/fatqat/releases/tag/v0.1.0a3",
+    "source": "GitHub Releases",
+    "sourceEn": "GitHub Releases",
+    "label": "开源进展",
+    "labelEn": "Open-source Update",
+    "featured": false,
+    "published": true
+  },
+  {
     "id": "fatqat-0-1-0a2",
     "title": "FatQat 0.1.0a2 版本发布",
     "titleEn": "FatQat 0.1.0a2 Released",
